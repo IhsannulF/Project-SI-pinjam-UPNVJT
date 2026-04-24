@@ -1,0 +1,39 @@
+/* 1. Pemanggil utama Tailwind V4 */
+@import "tailwindcss";
+
+/* 2. Deklarasi Warna Kustom Pengganti tailwind.config.js */
+@theme {
+  --color-sipblue: #009EF7;
+  --color-sipbluehover: #007BB5;
+  --color-sipred: #DE2828;
+  --color-sipdark: #16181e;
+  --color-sipbg: #1c202a;
+  --color-sipborder: #2d3240;
+  --color-siptext: #64748B;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* 3. Aturan Khusus (JavaScript & Hover) */
+@layer components {
+  .facility-card.active {
+    @apply border-sipblue bg-sipblue/10 shadow-[0_0_15px_rgba(0,158,247,0.15)] ring-1 ring-sipblue;
+  }
+
+  #calendarDays > div {
+    @apply aspect-square flex items-center justify-center rounded-xl border border-sipborder text-gray-300 font-medium transition-all duration-200 cursor-pointer;
+  }
+  
+  #calendarDays > div:empty {
+    @apply border-none cursor-default bg-transparent;
+  }
+
+  #calendarDays > .available {
+    @apply bg-[#00AE1C]/10 border-[#00AE1C]/30 text-[#00AE1C] hover:bg-[#00AE1C]/20 hover:border-[#00AE1C];
+  }
+
+  #calendarDays > .booked {
+    @apply bg-sipred/10 border-sipred/30 text-sipred opacity-60;
+    pointer-events: none; 
+    cursor: not-allowed;
+  }
+}
