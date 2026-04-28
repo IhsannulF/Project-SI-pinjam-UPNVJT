@@ -28,11 +28,6 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('home') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-external-link-alt text-lg group-hover:text-sipblue transition-colors"></i> Lihat Situs
-                    </a>
-                </li>
-                <li>
                     <a href="{{ route('admin.fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-sipblue/10 text-sipblue font-semibold border border-sipblue/20 transition-all">
                         <i class="fas fa-building text-lg"></i> Kelola Fasilitas
                     </a>
@@ -45,6 +40,11 @@
                 <li>
                     <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-users text-lg group-hover:text-sipblue transition-colors"></i> Data Pengguna
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('home') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                        <i class="fas fa-external-link-alt text-lg group-hover:text-sipblue transition-colors"></i> Lihat Situs
                     </a>
                 </li>
             </ul>
