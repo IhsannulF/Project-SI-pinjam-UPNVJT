@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>SI-PINJAM - Universitas Pembangunan Nasional "Veteran" Jawa Timur</title>
-    
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/Logo-SI-Pinjam.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -26,6 +26,7 @@
                 <nav class="hidden md:flex space-x-8 items-center">
                     <a href="#welcome" class="text-white font-medium hover:text-sipblue transition">Beranda</a>
                     <a href="#perbandingan" class="text-siptext hover:text-white transition">Hak Akses</a>
+                    <a href="#showcase" class="text-siptext hover:text-white transition">Fasilitas</a>
                     
                     @auth
                         @if(Auth::user()->role === 'admin')
@@ -39,7 +40,7 @@
                         </a>
                     @else
                         <a href="{{ url('login') }}" class="px-6 py-2.5 rounded-full bg-sipblue text-white text-sm font-semibold hover:bg-sipbluehover shadow-lg shadow-sipblue/30 transition">
-                            Log In System
+                            Log In Akun
                         </a>
                     @endauth
                 </nav>
@@ -56,14 +57,14 @@
             </div>
             
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
-                Sistem Informasi Peminjaman <br> <span class="text-sipblue">Fasilitas Kampus</span>
+                Peminjaman Fasilitas UPN <br> <span class="text-sipblue">"Veteran" Jawa Timur"</span>
             </h1>
             
             <p class="text-lg md:text-xl text-siptext mb-10 max-w-2xl mx-auto leading-relaxed">
-                Platform digital terpadu untuk memudahkan civitas akademika dan masyarakat umum dalam melakukan reservasi ruang kelas, laboratorium, hingga gedung serba guna.
+                SI Pinjam adalah Platform digital terpadu untuk memudahkan civitas akademika dan masyarakat umum dalam melakukan reservasi peminjaman fasilitas kampus di UPN "Veteran" Jawa Timur.
             </p>
             
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-5">
                 <a href="#perbandingan" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-sipblue text-white font-semibold hover:bg-sipbluehover transition shadow-lg shadow-sipblue/30">
                     Lihat Perbandingan Akses
                 </a>
@@ -93,7 +94,7 @@
         </div>
     </div>
 
-    <section class="py-20 bg-sipbg" id="perbandingan">
+    <section class="py-30 bg-sipbg" id="perbandingan">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="text-center mb-16">
