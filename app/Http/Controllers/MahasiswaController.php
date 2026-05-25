@@ -11,10 +11,29 @@ class MahasiswaController extends Controller
 {
     public function index()
     {
-        // Di masa depan, kita bisa mengambil data peminjaman terakhir user di sini
-        // $riwayat_terakhir = Peminjaman::where('id_user', Auth::id())->latest()->first();
-        
-        return view('mahasiswa.dashboard'); // Mengarahkan ke file dashboard.blade.php
+        $userId = \Illuminate\Support\Facades\Auth::id();
+
+        // 1. Ambil 1 pengajuan paling terakhir untuk Banner
+        $pengajuan_terakhir = \App\Models\Peminjaman::with('fasilitas')
+                                ->where('id_user', $userId)
+                                ->orderBy('id_peminjaman', 'desc')
+                                ->first();
+
+        // 2. Hitung statistik untuk Widget
+        $stat_pending = \App\Models\Peminjaman::where('id_user', $userId)->where('status', 'pending')->count();
+        $stat_disetujui = \App\Models\Peminjaman::where('id_user', $userId)->where('status', 'disetujui')->count();
+        $stat_ditolak = \App\Models\Peminjaman::where('id_user', $userId)->where('status', 'ditolak')->count();
+
+        // 3. Ambil 3 riwayat terbaru untuk tabel singkat
+        $riwayat_singkat = \App\Models\Peminjaman::with('fasilitas')
+                                ->where('id_user', $userId)
+                                ->orderBy('id_peminjaman', 'desc')
+                                ->take(3)
+                                ->get();
+
+        return view('mahasiswa.dashboard', compact(
+            'pengajuan_terakhir', 'stat_pending', 'stat_disetujui', 'stat_ditolak', 'riwayat_singkat'
+        ));
     }
     public function storePeminjaman(Request $request)
     {
@@ -60,6 +79,36 @@ class MahasiswaController extends Controller
         $fasilitas = \App\Models\Fasilitas::orderBy('nama_fasilitas', 'asc')->get();
         
         return view('mahasiswa.formmahasiswa', compact('fasilitas'));
+    }
+
+    // Method untuk halaman Cari Fasilitas (dengan sidebar Mahasiswa)
+    public function cariFasilitas()
+    {
+        $data_fasilitas = \App\Models\Fasilitas::all();
+        $peminjaman = \App\Models\Peminjaman::whereIn('status', ['disetujui', 'pending', 'diblokir'])->get();
+
+        $jadwal_booking = [];
+        foreach ($peminjaman as $p) {
+            $id = $p->id_fasilitas;
+            $tanggal = date('Y-m-d', strtotime($p->tanggal_pinjam));
+            $jadwal_booking[$id][$tanggal] = $p->keperluan ?? 'Telah dibooking / penuh';
+        }
+
+        return view('mahasiswa.carifasilitas', compact('data_fasilitas', 'jadwal_booking'));
+    }
+
+    // Method untuk halaman Riwayat Pengajuan
+    public function riwayat()
+    {
+        // Mengambil data peminjaman milik user yang sedang login (Auth::id())
+        // Menggunakan 'with' untuk memanggil relasi tabel fasilitas
+        // Diurutkan dari yang terbaru (created_at desc)
+        $riwayat = \App\Models\Peminjaman::with('fasilitas')
+                    ->where('id_user', \Illuminate\Support\Facades\Auth::id())
+                    ->orderBy('id_peminjaman', 'desc')
+                    ->get();
+
+        return view('mahasiswa.riwayat', compact('riwayat'));
     }
     
 

@@ -66,5 +66,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mahasiswa/form-pinjam', [MahasiswaController::class, 'formPinjam'])->name('mahasiswa.pinjam.form');
     // 2. Rute untuk memproses data saat tombol "Ajukan Peminjaman" ditekan
     Route::post('/mahasiswa/ajukan-pinjam', [MahasiswaController::class, 'storePeminjaman'])->name('mahasiswa.pinjam.store');
+    Route::get('/mahasiswa/cari-fasilitas', [App\Http\Controllers\MahasiswaController::class, 'cariFasilitas'])->name('mahasiswa.cari_fasilitas');
+    // 3. Rute untuk memproses data saat tombol "Riwayat" ditekan
+    Route::get('/mahasiswa/riwayat', [App\Http\Controllers\MahasiswaController::class, 'riwayat'])->name('mahasiswa.riwayat');
 
 });

@@ -23,22 +23,25 @@
 
             <ul class="flex-1 py-6 px-4 space-y-2 overflow-y-auto [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder">
                 <li>
-                    <a href="{{ route('mahasiswa.dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-sipblue/10 text-sipblue font-semibold border border-sipblue/20 transition-all">
-                        <i class="fas fa-home text-lg"></i> Dashboard
+                    <a href="{{ route('mahasiswa.dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                        <i class="fas fa-home text-lg group-hover:text-sipblue transition-colors"></i> Dashboard
                     </a>
                 </li>
+                
                 <li>
-                    <a href="{{ url('/jadwal-fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                    <a href="{{ route('mahasiswa.cari_fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-search text-lg group-hover:text-sipblue transition-colors"></i> Cari Fasilitas
                     </a>
                 </li>
+                
                 <li>
-                    <a href="{{ route('mahasiswa.pinjam.form') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-calendar-plus text-lg group-hover:text-[#00AE1C] transition-colors"></i> Buat Jadwal Pinjam
+                    <a href="{{ route('mahasiswa.pinjam.form') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-sipblue/10 text-sipblue font-semibold border border-sipblue/20 transition-all">
+                        <i class="fas fa-calendar-plus text-lg"></i> Buat Jadwal Pinjam
                     </a>
                 </li>
+                
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                    <a href="{{ route('mahasiswa.riwayat') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-history text-lg group-hover:text-sipblue transition-colors"></i> Riwayat Saya
                     </a>
                 </li>
@@ -100,18 +103,19 @@
                             @csrf
                             
                             <div class="space-y-6">
+                                
                                 <div>
                                     <label class="block text-xs font-bold text-siptext uppercase tracking-widest mb-2">Fasilitas yang Dipinjam <span class="text-sipred">*</span></label>
-                                    <div class="relative">
-                                        <i class="fas fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                                        <select name="id_fasilitas" required class="w-full bg-sipbg border border-sipborder rounded-xl pl-12 pr-4 py-3.5 text-white text-sm appearance-none focus:outline-none focus:border-sipblue transition-all cursor-pointer">
-                                            <option value="" disabled selected>-- Pilih Fasilitas Kampus --</option>
-                                            @foreach($fasilitas as $f)
-                                                <option value="{{ $f->id_fasilitas }}">{{ $f->nama_fasilitas }} (Kapasitas: {{ $f->kapasitas }} Org)</option>
-                                            @endforeach
-                                        </select>
-                                        <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-xs"></i>
-                                    </div>
+                                    
+                                    <input type="hidden" name="id_fasilitas" id="input_id_fasilitas">
+                                    
+                                    <button type="button" onclick="bukaModalFasilitas()" id="btnPilihFasilitas" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-4 text-left text-sm text-gray-400 hover:border-sipblue focus:outline-none transition-all flex justify-between items-center group shadow-inner">
+                                        <span id="textFasilitasTerpilih" class="flex items-center">
+                                            <i class="fas fa-building mr-3 text-gray-500 text-lg"></i> 
+                                            <span>-- Klik untuk Cari & Pilih Fasilitas --</span>
+                                        </span>
+                                        <i class="fas fa-search text-sipblue group-hover:scale-110 transition-transform"></i>
+                                    </button>
                                 </div>
 
                                 <div>
@@ -140,6 +144,7 @@
                                         <i class="fas fa-paper-plane"></i> Ajukan Peminjaman Fasilitas
                                     </button>
                                 </div>
+                                
                             </div>
                         </form>
 
@@ -147,16 +152,61 @@
                 </div>
 
             </div>
+            <div id="modalFasilitas" class="fixed inset-0 z-[60] hidden items-center justify-center opacity-0 transition-opacity duration-300">
+                <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="tutupModalFasilitas()"></div>
+                
+                <div class="relative bg-[#1a1d24] border border-sipborder rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden" id="modalBox">
+                    
+                    <div class="p-6 border-b border-sipborder flex justify-between items-center bg-[#15181f]">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-list-ul text-sipblue"></i> Katalog Fasilitas
+                        </h3>
+                        <button type="button" onclick="tutupModalFasilitas()" class="text-gray-400 hover:text-sipred transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sipred/10">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-4 border-b border-sipborder bg-[#1a1d24]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="searchFasilitas" placeholder="Ketik nama fasilitas (contoh: FIK 2, Kolam Renang)..." class="w-full bg-[#0f1115] border border-gray-700 rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipblue transition-all placeholder-gray-600">
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 space-y-6 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full" id="listFasilitasContainer">
+                        
+                        @foreach($fasilitas->groupBy('kategori') as $kategori => $items)
+                            <div class="kategori-group">
+                                <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 pl-1 flex items-center gap-2">
+                                    <i class="fas fa-tags text-siptext"></i> {{ $kategori ?: 'Lainnya' }}
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    @foreach($items as $f)
+                                        <button type="button" onclick="pilihFasilitas('{{ $f->id_fasilitas }}', '{{ $f->nama_fasilitas }}')" class="fasilitas-item text-left bg-[#15181f] border border-gray-700 hover:border-sipblue hover:bg-sipblue/10 rounded-xl p-4 transition-all group relative overflow-hidden">
+                                            <div class="absolute right-0 top-0 w-1 h-full bg-sipblue opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            <div class="font-bold text-white text-sm mb-1.5 group-hover:text-sipblue transition-colors fasilitas-name">{{ $f->nama_fasilitas }}</div>
+                                            <div class="text-xs text-gray-400 flex items-center gap-1.5">
+                                                <i class="fas fa-user-friends text-siptext"></i> Kapasitas: <span class="text-white">{{ $f->kapasitas }} Org</span>
+                                            </div>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <div id="noResultFasilitas" class="hidden text-center py-10 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-search text-2xl text-gray-500"></i>
+                            </div>
+                            <h4 class="text-white font-bold mb-1">Fasilitas tidak ditemukan</h4>
+                            <p class="text-xs text-gray-400">Coba gunakan kata kunci pencarian yang lain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
-    <script>
-        document.getElementById('formPinjam').addEventListener('submit', function(e) {
-            const btn = document.getElementById('btnSubmit');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memvalidasi Sistem...';
-            btn.classList.add('opacity-70', 'cursor-not-allowed');
-            // Form akan lanjut submit ke server
-        });
-    </script>
+    <script src="{{ asset('assets/js/form-pinjam.js') }}"></script>
 </body>
 </html>
