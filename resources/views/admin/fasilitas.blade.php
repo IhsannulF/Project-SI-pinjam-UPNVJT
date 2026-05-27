@@ -7,6 +7,10 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/images/Logo-SI-Pinjam.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -33,12 +37,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group flex-wrap">
+                    <a href="{{ route('admin.antrean') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group flex-wrap">
                         <i class="fas fa-clipboard-list text-lg group-hover:text-sipblue transition-colors"></i> Antrean Pinjaman
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                    <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-users text-lg group-hover:text-sipblue transition-colors"></i> Data Pengguna
                     </a>
                 </li>
@@ -135,28 +139,36 @@
     <form id="formBlokirJadwal" method="POST" action="{{ route('admin.block') }}">
         @csrf
         <div class="space-y-5">
+            
             <div>
-                <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Pilih Fasilitas</label>
-                <select name="id_fasilitas_blokir" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipred">
-                    <option value="" disabled selected>-- Pilih Fasilitas --</option>
-                    @foreach($q_fasilitas->groupBy('kategori') as $kategori => $items)
-                        <optgroup label="--- {{ strtoupper($kategori) }} ---" class="text-sipblue font-bold bg-sipdark">
-                            @foreach($items as $f)
-                                <option value="{{ $f->id_fasilitas }}">{{ $f->nama_fasilitas }}</option>
-                            @endforeach
-                        </optgroup>
-                    @endforeach
-                </select>
+                <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Pilih Fasilitas <span class="text-sipred">*</span></label>
+                
+                <input type="hidden" name="id_fasilitas_blokir" id="input_id_fasilitas_blokir">
+                
+                <button type="button" onclick="bukaModalFasilitasBlokir()" id="btnPilihFasilitasBlokir" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-4 text-left text-sm text-gray-400 hover:border-sipred focus:outline-none transition-all flex justify-between items-center group shadow-inner">
+                    <span id="textFasilitasTerpilihBlokir" class="flex items-center">
+                        <i class="fas fa-building mr-3 text-gray-500 text-lg"></i> 
+                        <span>-- Klik untuk Cari & Pilih Fasilitas --</span>
+                    </span>
+                    <i class="fas fa-search text-sipred group-hover:scale-110 transition-transform"></i>
+                </button>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Mulai</label>
-                    <input type="date" name="tanggal_mulai" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipred [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert">
+                    <div class="relative">
+                        <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                        <input type="text" name="tanggal_mulai" required placeholder="Pilih Tanggal" class="datepicker-custom w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all cursor-pointer">
+                    </div>
                 </div>
+                
                 <div>
                     <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Berakhir</label>
-                    <input type="date" name="tanggal_berakhir" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipred [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert">
+                    <div class="relative">
+                        <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                        <input type="text" name="tanggal_berakhir" required placeholder="Pilih Tanggal" class="datepicker-custom w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all cursor-pointer">
+                    </div>
                 </div>
             </div>
 
@@ -165,8 +177,8 @@
                 <input type="text" name="keperluan" required placeholder="Contoh: Renovasi Lab, Libur Lebaran" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipred placeholder-gray-600">
             </div>
 
-            <button type="submit" class="w-full bg-sipred hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-sipred/30 active:scale-95">
-                <i class="fas fa-ban mr-2"></i> Eksekusi Blokir
+            <button type="submit" id="btnSubmitBlokir" class="w-full bg-sipred hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-sipred/30 active:scale-95 flex justify-center items-center gap-2">
+                <i class="fas fa-ban"></i> Eksekusi Blokir
             </button>
         </div>
     </form>
@@ -304,17 +316,67 @@
     </div>
 </div>
 
-<form id="formUnblockRange" method="POST" action="{{ route('admin.unblock.range') }}" class="hidden">
-    @csrf
-    <input type="hidden" name="id_fasilitas_unblock" id="unblock_id_fasilitas">
-    <input type="hidden" name="tanggal_mulai_unblock" id="unblock_tanggal_mulai">
-    <input type="hidden" name="tanggal_berakhir_unblock" id="unblock_tanggal_berakhir">
-</form>
+                <form id="formUnblockRange" method="POST" action="{{ route('admin.unblock.range') }}" class="hidden">
+                    @csrf
+                    <input type="hidden" name="id_fasilitas_unblock" id="unblock_id_fasilitas">
+                    <input type="hidden" name="tanggal_mulai_unblock" id="unblock_tanggal_mulai">
+                    <input type="hidden" name="tanggal_berakhir_unblock" id="unblock_tanggal_berakhir">
+                </form>
                         </div>
 
                     </div>
                 </div>
             </div>
+
+            <div id="modalFasilitasBlokir" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="tutupModalFasilitasBlokir()"></div>
+        
+        <div id="modalBoxFasilitasBlokir" class="bg-[#1a1d24] border border-sipborder rounded-3xl w-full max-w-2xl max-h-[85vh] relative z-10 flex flex-col shadow-2xl scale-95 opacity-0 transition-all duration-300 overflow-hidden">
+            
+            <div class="p-6 border-b border-sipborder flex justify-between items-center bg-[#15181f]">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-list-ul text-sipred"></i> Katalog Fasilitas
+                </h3>
+                <button type="button" onclick="tutupModalFasilitasBlokir()" class="text-gray-400 hover:text-sipred transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sipred/10">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-4 border-b border-sipborder bg-[#1a1d24]">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchFasilitasBlokir" placeholder="Ketik nama fasilitas yang ingin diblokir..." class="w-full bg-[#0f1115] border border-gray-700 rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all placeholder-gray-600">
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5 space-y-6 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+                
+                @foreach($q_fasilitas->groupBy('kategori') as $kategori => $items)
+                    <div class="kategori-group-blokir">
+                        <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 pl-1 flex items-center gap-2">
+                            <i class="fas fa-tags text-siptext"></i> {{ $kategori ?: 'Lainnya' }}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach($items as $f)
+                                <button type="button" onclick="pilihFasilitasBlokir('{{ $f->id_fasilitas }}', '{{ $f->nama_fasilitas }}')" class="fasilitas-item-blokir text-left bg-[#15181f] border border-gray-700 hover:border-sipred hover:bg-sipred/10 rounded-xl p-4 transition-all group relative overflow-hidden">
+                                    <div class="absolute right-0 top-0 w-1 h-full bg-sipred opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div class="font-bold text-white text-sm group-hover:text-sipred transition-colors fasilitas-name-blokir">{{ $f->nama_fasilitas }}</div>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+
+                <div id="noResultFasilitasBlokir" class="hidden text-center py-10 flex-col items-center justify-center">
+                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-search text-2xl text-gray-500"></i>
+                    </div>
+                    <h4 class="text-white font-bold mb-1">Fasilitas tidak ditemukan</h4>
+                    <p class="text-xs text-gray-400">Coba gunakan kata kunci pencarian yang lain.</p>
+                </div>
+            </div>
+        </div>
+    </div>
         </main>
 
     </div>

@@ -25,9 +25,10 @@
                 </a>
 
                 <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="#welcome" class="text-white font-medium hover:text-sipblue transition">Beranda</a>
-                    <a href="#perbandingan" class="text-siptext hover:text-white transition">Hak Akses</a>
-                    <a href="#showcase" class="text-siptext hover:text-white transition">Fasilitas</a>
+                    <!-- Tambahkan class 'nav-link' di sini -->
+                    <a href="#welcome" class="nav-link text-white font-medium hover:text-sipblue transition">Beranda</a>
+                    <a href="#perbandingan" class="nav-link text-siptext hover:text-white transition">Hak Akses</a>
+                    <a href="#showcase" class="nav-link text-siptext hover:text-white transition">Fasilitas</a>
                     
                     @auth
                         @if(Auth::user()->role === 'admin')

@@ -7,6 +7,10 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/images/Logo-SI-Pinjam.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -119,11 +123,21 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-siptext uppercase tracking-widest mb-2">Tanggal Penggunaan <span class="text-sipred">*</span></label>
-                                    <div class="relative">
-                                        <input type="date" name="tanggal_pinjam" required min="{{ date('Y-m-d') }}" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-sipblue transition-all [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
+                                    <label class="block text-xs font-bold text-siptext uppercase tracking-widest mb-2">Rentang Waktu Penggunaan <span class="text-sipred">*</span></label>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="relative">
+                                            <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                                            <input type="text" name="tanggal_mulai" required placeholder="Tanggal Mulai" class="datepicker-mahasiswa w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipblue transition-all cursor-pointer">
+                                        </div>
+                                        
+                                        <div class="relative">
+                                            <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                                            <input type="text" name="tanggal_berakhir" required placeholder="Tanggal Berakhir" class="datepicker-mahasiswa w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipblue transition-all cursor-pointer">
+                                        </div>
                                     </div>
-                                    <p class="text-[10px] text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Pastikan tanggal yang dipilih tidak bentrok di halaman "Cari Fasilitas".</p>
+
+                                    <p class="text-[10px] text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Tentukan rentang hari. Pastikan tanggal yang dipilih tidak bentrok di halaman "Cari Fasilitas".</p>
                                 </div>
 
                                 <div>
@@ -207,6 +221,7 @@
         </main>
     </div>
 
+    
     <script src="{{ asset('assets/js/form-pinjam.js') }}"></script>
 </body>
 </html>

@@ -55,6 +55,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/unblock-bulk', [App\Http\Controllers\AdminController::class, 'bulkUnblockJadwal'])->name('admin.unblock.bulk');
     Route::post('/admin/unblock-range', [App\Http\Controllers\AdminController::class, 'unblockRange'])->name('admin.unblock.range');
 
+    Route::get('/admin/antrean', [App\Http\Controllers\AdminController::class, 'antrean'])->name('admin.antrean');
+    Route::post('/admin/antrean/{id}/status', [App\Http\Controllers\AdminController::class, 'updateStatus'])->name('admin.antrean.status');
+    Route::get('/admin/pengguna', [App\Http\Controllers\AdminController::class, 'pengguna'])->name('admin.pengguna');
+    Route::post('/admin/pengguna', [App\Http\Controllers\AdminController::class, 'storePengguna'])->name('admin.pengguna.store');
+    
+
 
     // --- AREA DOSEN & TENDIK ---
     Route::get('/dashboard/dosen', [DosenController::class, 'index'])->name('dosen.dashboard');

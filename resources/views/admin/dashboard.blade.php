@@ -32,13 +32,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group flex-wrap">
+                    <a href="{{ route('admin.antrean') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group flex-wrap">
                         <i class="fas fa-clipboard-list text-lg group-hover:text-sipblue transition-colors"></i> Antrean Pinjaman
-                        <span class="ml-auto bg-sipred text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $count_pending }}</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                    <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-users text-lg group-hover:text-sipblue transition-colors"></i> Data Pengguna
                     </a>
                 </li>

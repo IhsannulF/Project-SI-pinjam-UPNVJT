@@ -1,5 +1,9 @@
-// Logika Konfirmasi Hapus Fasilitas
-function konfirmasiHapus(button) {
+// ==========================================
+// FUNGSI GLOBAL (Dapat dipanggil dari HTML onclick)
+// ==========================================
+
+// 1. Konfirmasi Hapus Fasilitas
+window.konfirmasiHapus = function(button) {
     Swal.fire({
         title: 'Hapus Fasilitas?',
         text: "Data yang sudah dihapus tidak bisa dikembalikan!",
@@ -18,10 +22,10 @@ function konfirmasiHapus(button) {
     }).then((result) => {
         if (result.isConfirmed) button.closest('form').submit();
     });
-}
+};
 
-// Logika Buka Modal Edit dengan Desain UI yang Lebih Baik
-function bukaModalEdit(id, nama, kategori, kapasitas, ikon) {
+// 2. Buka Modal Edit Fasilitas
+window.bukaModalEdit = function(id, nama, kategori, kapasitas, ikon) {
     Swal.fire({
         title: 'Edit Fasilitas',
         background: '#16181e',
@@ -56,11 +60,7 @@ function bukaModalEdit(id, nama, kategori, kapasitas, ikon) {
                 <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ganti Foto (Opsional)</label>
                     <div class="relative bg-[#2d3240] border border-dashed border-gray-500 hover:border-[#009EF7] rounded-xl p-3 transition-all">
-                        <input type="file" name="foto_baru" class="w-full text-sm text-gray-400 
-                            file:cursor-pointer file:mr-4 file:py-2.5 file:px-5 
-                            file:rounded-lg file:border-0 file:text-xs file:font-bold 
-                            file:bg-[#009EF7]/10 file:text-[#009EF7] 
-                            hover:file:bg-[#009EF7] hover:file:text-white transition-all">
+                        <input type="file" name="foto_baru" class="w-full text-sm text-gray-400 file:cursor-pointer file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#009EF7]/10 file:text-[#009EF7] hover:file:bg-[#009EF7] hover:file:text-white transition-all">
                     </div>
                 </div>
             </form>
@@ -77,36 +77,10 @@ function bukaModalEdit(id, nama, kategori, kapasitas, ikon) {
         },
         preConfirm: () => document.getElementById('formEdit').submit()
     });
-}
+};
 
-// Logika Filter Tombol Kategori
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const filter = btn.dataset.filter;
-            
-            // Ubah gaya tombol aktif
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                b.classList.remove('bg-sipblue', 'text-white', 'border-sipblue');
-                b.classList.add('bg-sipbg', 'text-siptext', 'border-sipborder');
-            });
-            btn.classList.remove('bg-sipbg', 'text-siptext');
-            btn.classList.add('bg-sipblue', 'text-white', 'border-sipblue');
-
-            // Filter item
-            document.querySelectorAll('.fasilitas-item').forEach(item => {
-                item.style.display = (filter === 'semua' || item.dataset.kategori === filter) ? 'flex' : 'none';
-            });
-        });
-    });
-});
-
-// ==========================================
-// SWEETALERT KONFIRMASI UNTUK SEMUA PROSES
-// ==========================================
-
-// 1. Konfirmasi Buka Blokir
-function konfirmasiBukaBlokir(button) {
+// 3. Konfirmasi Buka Blokir (Unblock)
+window.konfirmasiBukaBlokir = function(button) {
     Swal.fire({
         title: 'Buka Blokir Jadwal?',
         text: "Fasilitas ini akan kembali tersedia untuk dipinjam pada tanggal tersebut.",
@@ -125,15 +99,74 @@ function konfirmasiBukaBlokir(button) {
     }).then((result) => {
         if (result.isConfirmed) button.closest('form').submit();
     });
-}
+};
 
+// 4. Fungsi Pop-up Pilih Fasilitas (Untuk Blokir)
+window.bukaModalFasilitasBlokir = function() {
+    const modalBlokir = document.getElementById('modalFasilitasBlokir');
+    const modalBoxBlokir = document.getElementById('modalBoxFasilitasBlokir');
+    const searchInputBlokir = document.getElementById('searchFasilitasBlokir');
+    
+    if (modalBlokir && modalBoxBlokir) {
+        modalBlokir.classList.remove('hidden');
+        modalBlokir.classList.add('flex');
+        setTimeout(() => {
+            modalBoxBlokir.classList.remove('scale-95', 'opacity-0');
+            modalBoxBlokir.classList.add('scale-100', 'opacity-100');
+            if(searchInputBlokir) searchInputBlokir.focus();
+        }, 10);
+    }
+};
+
+window.tutupModalFasilitasBlokir = function() {
+    const modalBlokir = document.getElementById('modalFasilitasBlokir');
+    const modalBoxBlokir = document.getElementById('modalBoxFasilitasBlokir');
+    
+    if (modalBlokir && modalBoxBlokir) {
+        modalBoxBlokir.classList.remove('scale-100', 'opacity-100');
+        modalBoxBlokir.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modalBlokir.classList.add('hidden');
+            modalBlokir.classList.remove('flex');
+        }, 300);
+    }
+};
+
+window.pilihFasilitasBlokir = function(id, nama) {
+    document.getElementById('input_id_fasilitas_blokir').value = id;
+    document.getElementById('textFasilitasTerpilihBlokir').innerHTML = `<i class="fas fa-check-circle mr-3 text-sipred text-lg shadow-[0_0_10px_rgba(222,40,40,0.3)] rounded-full"></i> <span class="text-white font-bold text-sm">${nama}</span>`;
+    document.getElementById('btnPilihFasilitasBlokir').classList.add('border-sipred', 'bg-sipred/5');
+    tutupModalFasilitasBlokir();
+};
+
+// ==========================================
+// EVENT LISTENER KETIKA HALAMAN DIMUAT (DOM)
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 2. Konfirmasi Tambah Fasilitas
+    // --- A. Filter Tombol Kategori Fasilitas ---
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.dataset.filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('bg-sipblue', 'text-white', 'border-sipblue');
+                b.classList.add('bg-sipbg', 'text-siptext', 'border-sipborder');
+            });
+            btn.classList.remove('bg-sipbg', 'text-siptext');
+            btn.classList.add('bg-sipblue', 'text-white', 'border-sipblue');
+
+            document.querySelectorAll('.fasilitas-item').forEach(item => {
+                item.style.display = (filter === 'semua' || item.dataset.kategori === filter) ? 'flex' : 'none';
+            });
+        });
+    });
+
+    // --- B. Konfirmasi Form Tambah Fasilitas ---
     const formTambah = document.getElementById('formTambahFasilitas');
     if (formTambah) {
         formTambah.addEventListener('submit', function(e) {
-            e.preventDefault(); // Tahan pengiriman form
+            e.preventDefault();
             Swal.fire({
                 title: 'Simpan Fasilitas Baru?',
                 text: "Pastikan nama dan kapasitas sudah benar.",
@@ -142,49 +175,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 confirmButtonColor: '#009EF7',
                 confirmButtonText: 'Simpan',
                 cancelButtonText: 'Periksa Lagi',
-                background: '#16181e',
-                color: '#fff',
-                customClass: { confirmButton: 'rounded-xl', cancelButton: 'rounded-xl', popup: 'rounded-3xl border border-gray-700' }
+                background: '#16181e', color: '#fff',
+                customClass: { confirmButton: 'rounded-xl font-bold', cancelButton: 'rounded-xl font-bold', popup: 'rounded-3xl border border-gray-700' }
             }).then((result) => {
                 if (result.isConfirmed) this.submit();
             });
         });
     }
 
-    // 3. Konfirmasi Blokir Jadwal
+    // --- C. Validasi & Konfirmasi Form Blokir Jadwal ---
     const formBlokir = document.getElementById('formBlokirJadwal');
+    const inputFasilitasBlokir = document.getElementById('input_id_fasilitas_blokir');
+    
     if (formBlokir) {
         formBlokir.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Validasi: Cek apakah fasilitas sudah dipilih dari Modal Pop-up
+            if(!inputFasilitasBlokir || !inputFasilitasBlokir.value) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pilih Fasilitas!',
+                    text: 'Silakan klik tombol pencarian untuk memilih fasilitas yang ingin diblokir.',
+                    background: '#16181e', color: '#fff', confirmButtonColor: '#DE2828',
+                    customClass: { popup: 'rounded-3xl border border-gray-700', confirmButton: 'rounded-xl font-bold' }
+                });
+                return;
+            }
+
+            // Jika sudah dipilih, tampilkan konfirmasi
             Swal.fire({
                 title: 'Blokir Rentang Tanggal Ini?',
                 text: "Pengguna tidak akan bisa meminjam fasilitas ini di tanggal yang dipilih.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#DE2828', // Warna merah
+                confirmButtonColor: '#DE2828',
                 confirmButtonText: '<i class="fas fa-ban mr-1"></i> Ya, Blokir',
                 cancelButtonText: 'Batal',
-                background: '#16181e',
-                color: '#fff',
-                customClass: { confirmButton: 'rounded-xl', cancelButton: 'rounded-xl', popup: 'rounded-3xl border border-gray-700' }
+                background: '#16181e', color: '#fff',
+                customClass: { confirmButton: 'rounded-xl font-bold', cancelButton: 'rounded-xl font-bold', popup: 'rounded-3xl border border-gray-700' }
             }).then((result) => {
                 if (result.isConfirmed) this.submit();
             });
         });
     }
 
-    // ==========================================
-    // LOGIKA PENCARIAN & FILTER TABEL BLOKIR
-    // ==========================================
+    // --- D. Pencarian & Filter Tabel Daftar Blokir ---
     const searchBlokir = document.getElementById('searchBlokir');
     const filterKategoriBlokir = document.getElementById('filterKategoriBlokir');
     const blokirRows = document.querySelectorAll('.blokir-row');
 
     function jalankanFilterBlokir() {
         if (!searchBlokir) return;
-        
         const keyword = searchBlokir.value.toLowerCase();
-        const kategori = filterKategoriBlokir.value.toLowerCase();
+        const kategori = filterKategoriBlokir ? filterKategoriBlokir.value.toLowerCase() : 'semua';
 
         blokirRows.forEach(row => {
             const nama = row.getAttribute('data-nama') || '';
@@ -194,72 +238,63 @@ document.addEventListener('DOMContentLoaded', () => {
             const textMatch = nama.includes(keyword) || alasan.includes(keyword);
             const catMatch = kategori === 'semua' || kat === kategori;
 
-            if (textMatch && catMatch) {
-                // KUNCI PERBAIKAN ADA DI SINI:
-                // Gunakan kutip kosong '' agar HTML mengembalikannya ke pengaturan default (table-row).
-                // JANGAN gunakan 'flex' atau 'block' karena tabel akan hancur.
-                row.style.display = ''; 
-            } else {
-                row.style.display = 'none'; // Sembunyikan
-            }
+            row.style.display = (textMatch && catMatch) ? '' : 'none'; 
         });
         
-        // Agar kotak centang "Check All" otomatis hilang jika hasil pencarian kosong
         if(typeof updateBulkUI === 'function') updateBulkUI();
     }
 
-    if (searchBlokir && filterKategoriBlokir) {
-        searchBlokir.addEventListener('keyup', jalankanFilterBlokir);
-        filterKategoriBlokir.addEventListener('change', jalankanFilterBlokir);
-    }
+    if (searchBlokir) searchBlokir.addEventListener('keyup', jalankanFilterBlokir);
+    if (filterKategoriBlokir) filterKategoriBlokir.addEventListener('change', jalankanFilterBlokir);
 
-    // ==========================================
-// PENCARIAN FASILITAS DIBLOKIR
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-    const searchBlokir = document.getElementById('searchBlokir');
-    const filterKategoriBlokir = document.getElementById('filterKategoriBlokir');
-    const blokirRows = document.querySelectorAll('.blokir-row');
+    // --- E. Fitur Pencarian di dalam Modal Pop-up Fasilitas ---
+    const searchInputModal = document.getElementById('searchFasilitasBlokir');
+    if (searchInputModal) {
+        searchInputModal.addEventListener('input', function() {
+            const keyword = this.value.toLowerCase();
+            const groups = document.querySelectorAll('.kategori-group-blokir');
+            let anyVisible = false;
 
-    function jalankanFilterBlokir() {
-        if (!searchBlokir) return;
-        
-        const keyword = searchBlokir.value.toLowerCase();
-        const kategori = filterKategoriBlokir.value.toLowerCase();
+            groups.forEach(group => {
+                const items = group.querySelectorAll('.fasilitas-item-blokir');
+                let hasVisibleItem = false;
 
-        blokirRows.forEach(row => {
-            const nama = row.getAttribute('data-nama') || '';
-            const kat = row.getAttribute('data-kategori') || '';
+                items.forEach(item => {
+                    const name = item.querySelector('.fasilitas-name-blokir').textContent.toLowerCase();
+                    if (name.includes(keyword)) {
+                        item.style.display = 'block';
+                        hasVisibleItem = true;
+                        anyVisible = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
 
-            const textMatch = nama.includes(keyword);
-            const catMatch = kategori === 'semua' || kat === kategori;
+                group.style.display = hasVisibleItem ? 'block' : 'none';
+            });
 
-            // Tampilkan baris jika cocok dengan pencarian dan filter
-            row.style.display = (textMatch && catMatch) ? '' : 'none'; 
+            const noResult = document.getElementById('noResultFasilitasBlokir');
+            if(noResult) noResult.style.display = anyVisible ? 'none' : 'flex';
         });
     }
 
-    if (searchBlokir) {
-        searchBlokir.addEventListener('keyup', jalankanFilterBlokir);
-        filterKategoriBlokir.addEventListener('change', jalankanFilterBlokir);
-    }
+    // --- Inisialisasi Kalender Flatpickr ---
+    flatpickr(".datepicker-custom", {
+        locale: "id",          // Menggunakan bahasa Indonesia (Senin, Selasa, dst)
+        dateFormat: "Y-m-d",   // Format yang diterima oleh database Laravel
+        minDate: "today",      // Mencegah Admin memblokir tanggal di masa lalu
+        disableMobile: "true"  // Memaksa kalender dark mode tetap muncul di HP
+    });
 });
 
 // ==========================================
-// POP-UP ATUR JADWAL BLOKIR (SWEETALERT)
+// POP-UP ATUR JADWAL BLOKIR (EDIT RENTANG)
 // ==========================================
 window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
-    
-    // 1. Ambil data kompleks dari atribut
     const dataJson = btnElement.getAttribute('data-dates');
     let blockedData = [];
-    try {
-        blockedData = JSON.parse(dataJson);
-    } catch (e) {
-        console.error("Gagal membaca data", e);
-    }
+    try { blockedData = JSON.parse(dataJson); } catch (e) { console.error("Gagal membaca data", e); }
 
-    // 2. Kelompokkan data berdasarkan 'alasan'
     let datesHtml = '';
     if (blockedData.length > 0) {
         const groupedByReason = {};
@@ -268,66 +303,35 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
             groupedByReason[item.alasan].push(item.tanggal);
         });
 
-        // Fungsi bantu memformat tanggal
-        const formatDate = (dStr) => {
-            return new Date(dStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-        };
+        const formatDate = (dStr) => new Date(dStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 
-        // 3. Susun HTML Daftar Tanggal (Dikelompokkan & Dimampatkan)
         let listHtml = '';
         for (const [alasan, dates] of Object.entries(groupedByReason)) {
-            
-            // Urutkan tanggal dari yang terkecil
             dates.sort();
-
-            // ALGORITMA PINTAR: Gabungkan tanggal yang berurutan
             let ranges = [];
-            let start = dates[0];
-            let prev = dates[0];
+            let start = dates[0], prev = dates[0];
 
             for (let i = 1; i < dates.length; i++) {
                 let current = dates[i];
-                let dPrev = new Date(prev);
-                let dCurr = new Date(current);
-                
-                // Hitung selisih hari
-                let diffTime = Math.abs(dCurr - dPrev);
-                let diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                let diffDays = Math.round(Math.abs(new Date(current) - new Date(prev)) / (1000 * 60 * 60 * 24));
 
                 if (diffDays === 1) {
-                    // Jika berurutan, lanjut ke hari berikutnya
                     prev = current;
                 } else {
-                    // Jika terputus, simpan rentang yang sudah ada
-                    if (start === prev) {
-                        ranges.push(formatDate(start)); // Cuma 1 hari
-                    } else {
-                        ranges.push(`${formatDate(start)} s/d ${formatDate(prev)}`); // Banyak hari
-                    }
-                    start = current;
-                    prev = current;
+                    ranges.push(start === prev ? formatDate(start) : `${formatDate(start)} s/d ${formatDate(prev)}`);
+                    start = prev = current;
                 }
             }
-            // Simpan rentang terakhir
-            if (start === prev) {
-                ranges.push(formatDate(start));
-            } else {
-                ranges.push(`${formatDate(start)} s/d ${formatDate(prev)}`);
-            }
+            ranges.push(start === prev ? formatDate(start) : `${formatDate(start)} s/d ${formatDate(prev)}`);
 
-            // Ubah text rentang menjadi Badge HTML yang lebih lebar
-            const badges = ranges.map(rangeText => {
-                return `<span class="bg-sipred/20 text-sipred border border-sipred/30 px-3 py-1.5 rounded-md text-xs font-bold inline-flex items-center shadow-sm"><i class="far fa-calendar-alt mr-1.5"></i> ${rangeText}</span>`;
-            }).join(' ');
+            const badges = ranges.map(rangeText => `<span class="bg-sipred/20 text-sipred border border-sipred/30 px-3 py-1.5 rounded-md text-xs font-bold inline-flex items-center shadow-sm"><i class="far fa-calendar-alt mr-1.5"></i> ${rangeText}</span>`).join(' ');
 
             listHtml += `
                 <div class="mb-3 last:mb-0 border-b border-gray-700/50 pb-3 last:border-0 last:pb-0">
                     <div class="text-[11px] font-bold text-gray-300 mb-2 flex items-center gap-2">
                         <i class="fas fa-thumbtack text-sipred"></i> <span>${alasan}</span>
                     </div>
-                    <div class="flex flex-wrap gap-2 pl-5">
-                        ${badges}
-                    </div>
+                    <div class="flex flex-wrap gap-2 pl-5">${badges}</div>
                 </div>
             `;
         }
@@ -342,11 +346,11 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
         `;
     }
 
-    // 4. Munculkan Pop-up SweetAlert
     Swal.fire({
         title: 'Atur & Buka Jadwal',
         html: `
             <div class="text-left space-y-4 mt-4">
+                
                 <div class="bg-[#16181e] border border-gray-600 rounded-xl p-4 flex items-center gap-3 shadow-lg">
                     <div class="bg-sipblue/10 w-10 h-10 rounded-lg flex items-center justify-center">
                         <i class="fas fa-building text-[#009EF7] text-lg"></i>
@@ -364,35 +368,51 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Dari Tanggal</label>
-                            <input type="date" id="swal-mulai" class="w-full bg-[#16181e] border border-gray-600 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#009EF7] [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert transition-all">
+                            <div class="relative">
+                                <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                                <input type="text" id="swal-mulai" placeholder="Pilih Tanggal" class="w-full bg-[#16181e] border border-gray-600 rounded-xl pl-11 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#009EF7] transition-all cursor-pointer">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Sampai Tanggal</label>
-                            <input type="date" id="swal-akhir" class="w-full bg-[#16181e] border border-gray-600 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#009EF7] [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert transition-all">
+                            <div class="relative">
+                                <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                                <input type="text" id="swal-akhir" placeholder="Pilih Tanggal" class="w-full bg-[#16181e] border border-gray-600 rounded-xl pl-11 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#009EF7] transition-all cursor-pointer">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         `,
-        background: '#1e2128',
-        color: '#fff',
-        showCancelButton: true,
+        background: '#1e2128', 
+        color: '#fff', 
+        showCancelButton: true, 
         confirmButtonColor: '#009EF7',
         confirmButtonText: '<i class="fas fa-unlock mr-2"></i> Buka Rentang Tanggal Ini',
         cancelButtonText: 'Batal',
         customClass: { popup: 'rounded-3xl border border-gray-700', confirmButton: 'text-sm font-bold', cancelButton: 'text-sm font-bold' },
+        
+        // --- TRIGGER FLATPICKR ---
+        didOpen: () => {
+            flatpickr("#swal-mulai", {
+                locale: "id",
+                dateFormat: "Y-m-d",
+                disableMobile: "true"
+            });
+            flatpickr("#swal-akhir", {
+                locale: "id",
+                dateFormat: "Y-m-d",
+                disableMobile: "true"
+            });
+        },
+        
+        // --- VALIDASI SEBELUM SUBMIT ---
         preConfirm: () => {
             const mulai = document.getElementById('swal-mulai').value;
             const akhir = document.getElementById('swal-akhir').value;
 
-            if (!mulai || !akhir) {
-                Swal.showValidationMessage('Semua tanggal wajib diisi!');
-                return false;
-            }
-            if (mulai > akhir) {
-                Swal.showValidationMessage('Tanggal mulai tidak boleh melebihi tanggal akhir!');
-                return false;
-            }
+            if (!mulai || !akhir) { Swal.showValidationMessage('Semua tanggal wajib diisi!'); return false; }
+            if (mulai > akhir) { Swal.showValidationMessage('Tanggal mulai tidak boleh melebihi tanggal akhir!'); return false; }
             return { mulai, akhir };
         }
     }).then((result) => {
@@ -403,7 +423,4 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
             document.getElementById('formUnblockRange').submit();
         }
     });
-}
-
-
-});
+};

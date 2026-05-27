@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\Fasilitas;
 use App\Models\Peminjaman;
@@ -162,5 +164,65 @@ class AdminController extends Controller
         }
     }
     
-    // (Opsional) Fungsi buka blokir satu-satu saya hapus karena kita sudah pakai unblockRange yang jauh lebih canggih.
+    // 1. Menampilkan Halaman Antrean Pinjaman
+    public function antrean()
+    {
+        // Mengambil semua data peminjaman beserta relasi user dan fasilitas
+        // Diurutkan berdasarkan status (pending di atas) lalu ID terbaru
+        $peminjaman = \App\Models\Peminjaman::with(['user', 'fasilitas'])
+                        ->orderByRaw("FIELD(status, 'pending', 'disetujui', 'ditolak')")
+                        ->orderBy('id_peminjaman', 'desc')
+                        ->get();
+
+        return view('admin.antrean', compact('peminjaman'));
+    }
+
+    // 2. Memproses Perubahan Status (Terima / Tolak)
+    public function updateStatus(Request $request, $id)
+    {
+        $pinjam = \App\Models\Peminjaman::findOrFail($id);
+        
+        // Validasi input status
+        $request->validate([
+            'status' => 'required|in:disetujui,ditolak'
+        ]);
+
+        $pinjam->status = $request->status;
+        $pinjam->save();
+
+        $pesan = $request->status == 'disetujui' ? 'Pengajuan berhasil disetujui!' : 'Pengajuan berhasil ditolak!';
+        return back()->with('success', $pesan);
+    }
+
+    // 3. Menampilkan Halaman Data Pengguna
+    public function pengguna()
+    {
+        // Mengambil semua user, diurutkan berdasarkan role lalu nama
+        $users = \App\Models\User::orderBy('role')->orderBy('nama_lengkap', 'asc')->get();
+        return view('admin.pengguna', compact('users'));
+    }
+
+    // Fungsi untuk menyimpan data pengguna baru dari Modal
+    public function storePengguna(Request $request)
+    {
+        // Validasi input dari form
+        $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'identitas'    => 'required|string|max:50|unique:users,identitas', // Tambahan validasi identitas
+            'email'        => 'required|string|email|max:255|unique:users,email', 
+            'password'     => 'required|string|min:8',
+            'role'         => 'required|in:admin,dosen,mahasiswa,eksternal',
+        ]);
+
+        // Simpan ke database
+        User::create([
+            'nama_lengkap' => $request->nama_lengkap,
+            'identitas'    => $request->identitas, 
+            'email'        => $request->email,
+            'password'     => Hash::make($request->password), // Enkripsi password
+            'role'         => $request->role,
+        ]);
+
+        return back()->with('success', 'Pengguna baru berhasil didaftarkan!');
+    }
 }
