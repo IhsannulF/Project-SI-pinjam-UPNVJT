@@ -231,4 +231,36 @@ class AdminController extends Controller
 
         return back()->with('success', 'Pengguna baru berhasil didaftarkan!');
     }
+
+    // --- FITUR KELOLA RIWAYAT ---
+
+    // 1. Fungsi Update Tanggal Riwayat
+    public function updateJadwal(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_mulai' => 'required|date',
+            'tanggal_berakhir' => 'required|date|after_or_equal:tanggal_mulai',
+        ]);
+
+        $peminjaman = \App\Models\Peminjaman::findOrFail($id);
+        $peminjaman->update([
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_berakhir' => $request->tanggal_berakhir,
+        ]);
+
+        return redirect()->back()->with('success', 'Tanggal peminjaman berhasil diperbarui!');
+    }
+
+    // 2. Fungsi Batalkan Riwayat (Bukan Hapus Permanen)
+    public function batalkanJadwal($id)
+    {
+        $peminjaman = \App\Models\Peminjaman::findOrFail($id);
+        
+        // Ubah status menjadi dibatalkan
+        $peminjaman->update([
+            'status' => 'dibatalkan'
+        ]);
+
+        return redirect()->back()->with('success', 'Jadwal berhasil dibatalkan!');
+    }
 }

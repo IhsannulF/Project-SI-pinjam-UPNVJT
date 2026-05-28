@@ -67,28 +67,39 @@
                 
                 @if($pengajuan_terakhir)
                     @php
-                        $bgBanner = $pengajuan_terakhir->status == 'pending' ? 'from-yellow-600/20 to-sipbg border-yellow-500/30 border-l-yellow-500' : 
-                                    ($pengajuan_terakhir->status == 'disetujui' ? 'from-[#00AE1C]/20 to-sipbg border-[#00AE1C]/30 border-l-[#00AE1C]' : 
-                                    'from-sipred/20 to-sipbg border-sipred/30 border-l-sipred');
-                        $iconBanner = $pengajuan_terakhir->status == 'pending' ? 'fa-clock text-yellow-500' : 
-                                      ($pengajuan_terakhir->status == 'disetujui' ? 'fa-check-circle text-[#00AE1C]' : 
-                                      'fa-times-circle text-sipred');
+                        // Logika Penentuan Warna dan Ikon Banner
+                        if ($pengajuan_terakhir->status == 'pending' || $pengajuan_terakhir->status == 'menunggu') {
+                            $bgBanner = 'from-yellow-600/20 to-sipbg border-yellow-500/30 border-l-yellow-500';
+                            $iconBanner = 'fa-clock text-yellow-500';
+                        } elseif ($pengajuan_terakhir->status == 'disetujui') {
+                            $bgBanner = 'from-[#00AE1C]/20 to-sipbg border-[#00AE1C]/30 border-l-[#00AE1C]';
+                            $iconBanner = 'fa-check-circle text-[#00AE1C]';
+                        } elseif ($pengajuan_terakhir->status == 'dibatalkan') {
+                            // TAMBAHAN BARU: Tema Abu-abu untuk status Dibatalkan
+                            $bgBanner = 'from-gray-600/20 to-sipbg border-gray-600/30 border-l-gray-500';
+                            $iconBanner = 'fa-ban text-gray-400';
+                        } else {
+                            // Default untuk status ditolak / lainnya
+                            $bgBanner = 'from-sipred/20 to-sipbg border-sipred/30 border-l-sipred';
+                            $iconBanner = 'fa-times-circle text-sipred';
+                        }
                     @endphp
-                    <div class="bg-gradient-to-r {{ $bgBanner }} border border-l-4 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                    
+                    <div class="bg-gradient-to-r {{ $bgBanner }} border border-l-4 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden transition-all">
                         <div class="relative z-10 flex items-center gap-6">
-                            <div class="w-16 h-16 rounded-2xl bg-[#0f1115]/50 flex items-center justify-center shrink-0 border border-gray-700/50">
+                            <div class="w-16 h-16 rounded-2xl bg-[#0f1115]/50 flex items-center justify-center shrink-0 border border-gray-700/50 shadow-inner">
                                 <i class="fas {{ $iconBanner }} text-3xl"></i>
                             </div>
                             <div>
                                 <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Status Pengajuan Terakhir</h5>
                                 <p class="text-lg font-bold text-white">
                                     {{ $pengajuan_terakhir->fasilitas->nama_fasilitas ?? 'Fasilitas' }} 
-                                    <span class="text-sm font-medium text-gray-400 ml-2">({{ \Carbon\Carbon::parse($pengajuan_terakhir->tanggal_pinjam)->format('d M Y') }})</span>
+                                    <span class="text-sm font-medium text-gray-400 ml-2">({{ \Carbon\Carbon::parse($pengajuan_terakhir->tanggal_mulai ?? $pengajuan_terakhir->tanggal_pinjam)->format('d M Y') }})</span>
                                 </p>
                             </div>
                         </div>
                         <div class="relative z-10 shrink-0 w-full md:w-auto mt-4 md:mt-0 flex gap-3">
-                            <a href="{{ route('mahasiswa.riwayat') }}" class="flex justify-center items-center gap-2 bg-[#1a1d24] hover:bg-gray-800 text-white border border-gray-600 px-6 py-3 rounded-xl font-semibold transition-all">
+                            <a href="{{ route('mahasiswa.riwayat') }}" class="flex justify-center items-center gap-2 bg-[#1a1d24] hover:bg-gray-800 text-white border border-gray-600 px-6 py-3 rounded-xl font-semibold transition-all shadow-sm">
                                 Lihat Detail
                             </a>
                         </div>
@@ -142,6 +153,15 @@
                                 <h3 class="text-2xl font-bold text-sipred">{{ $stat_ditolak }}</h3>
                             </div>
                             <div class="w-12 h-12 rounded-full bg-sipred/10 flex items-center justify-center text-sipred text-xl border border-sipred/20">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                        </div>
+                        <div class="bg-[#15181f] border border-gray-700 rounded-xl p-5 flex items-center justify-between shadow-sm hover:border-gray-500 transition-colors">
+                            <div>
+                                <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Dibatalkan</h5>
+                                <span class="text-2xl font-extrabold text-white">{{ $dibatalkan ?? 0 }}</span>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-gray-600/10 border border-gray-600/30 flex items-center justify-center text-gray-400">
                                 <i class="fas fa-ban"></i>
                             </div>
                         </div>

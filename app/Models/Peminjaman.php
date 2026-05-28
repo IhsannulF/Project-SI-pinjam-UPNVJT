@@ -19,6 +19,8 @@ class Peminjaman extends Model
         'tanggal_berakhir',
         'keperluan',
         'status',
+        'dokumen_mou',
+        'bukti_bayar'
     ];
 
     // Relasi ke tabel Fasilitas
@@ -30,4 +32,6 @@ class Peminjaman extends Model
     public function user() {
         return $this->belongsTo(User::class, 'id_user');
     }
+
+
 }

@@ -87,12 +87,17 @@
                                 @forelse($riwayat as $item)
                                     <tr class="border-b border-gray-700/50 hover:bg-sipblue/5 transition-colors group">
                                         
-                                        <td class="p-4 text-gray-300">
-                                            <div class="font-medium">
-                                                ID: #{{ $item->id_peminjaman }}
-                                            </div>
-                                            <div class="text-xs text-gray-500">
-                                                Tgl Pinjam: {{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d/m/Y') }}
+                                        <!-- KOLOM TGL PENGAJUAN -->
+                                        <td class="py-4 px-6 align-middle">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-xl bg-[#15181f] border border-gray-700 flex items-center justify-center text-gray-400 shrink-0 shadow-inner">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </div>
+                                                <div>            
+                                                    <div class="text-sm font-bold text-white mb-0.5">
+                                                        {{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y') : \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y') }}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                         
@@ -109,19 +114,14 @@
                                         </td>
                                         
                                         <td class="p-4 text-center">
-                                            @if($item->status == 'pending')
-                                                <span class="inline-flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1.5 rounded-lg text-xs font-bold">
-                                                    <i class="fas fa-clock"></i> Menunggu
+                                           @if($item->status == 'disetujui')
+                                                @elseif($item->status == 'menunggu')
+                                                @elseif($item->status == 'dibatalkan')
+                                                <span class="inline-flex items-center gap-1.5 bg-gray-600/10 text-gray-400 border border-gray-600/30 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide">
+                                                    <i class="fas fa-ban"></i> Dibatalkan
                                                 </span>
-                                            @elseif($item->status == 'disetujui')
-                                                <span class="inline-flex items-center gap-1.5 bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/20 px-3 py-1.5 rounded-lg text-xs font-bold">
-                                                    <i class="fas fa-check-circle"></i> Diterima
-                                                </span>
-                                            @elseif($item->status == 'ditolak')
-                                                <span class="inline-flex items-center gap-1.5 bg-sipred/10 text-sipred border border-sipred/20 px-3 py-1.5 rounded-lg text-xs font-bold">
-                                                    <i class="fas fa-times-circle"></i> Ditolak
-                                                </span>
-                                            @endif
+                                            @else
+                                                @endif
                                         </td>
 
                                     </tr>

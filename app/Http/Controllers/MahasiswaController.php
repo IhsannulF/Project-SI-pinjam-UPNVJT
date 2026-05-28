@@ -24,6 +24,7 @@ class MahasiswaController extends Controller
         $stat_pending = Peminjaman::where('id_user', $userId)->where('status', 'pending')->count();
         $stat_disetujui = Peminjaman::where('id_user', $userId)->where('status', 'disetujui')->count();
         $stat_ditolak = Peminjaman::where('id_user', $userId)->where('status', 'ditolak')->count();
+        $dibatalkan = Peminjaman::where('id_user', $userId)->where('status', 'dibatalkan')->count();
 
         // 3. Ambil 3 riwayat terbaru untuk tabel singkat
         $riwayat_singkat = Peminjaman::with('fasilitas')
@@ -33,7 +34,7 @@ class MahasiswaController extends Controller
                                 ->get();
 
         return view('mahasiswa.dashboard', compact(
-            'pengajuan_terakhir', 'stat_pending', 'stat_disetujui', 'stat_ditolak', 'riwayat_singkat'
+            'pengajuan_terakhir', 'stat_pending', 'stat_disetujui', 'stat_ditolak', 'riwayat_singkat', 'dibatalkan'
         ));
     }
 

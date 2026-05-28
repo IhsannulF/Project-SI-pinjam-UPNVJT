@@ -27,17 +27,17 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                    <a href="{{ route('dosen.fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-external-link-alt text-lg group-hover:text-sipblue transition-colors"></i> Lihat Fasilitas
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-yellow-500/10 hover:text-yellow-500 font-medium transition-all group">
+                    <a href="{{ route('dosen.reservasi') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-yellow-500/10 hover:text-yellow-500 font-medium transition-all group">
                         <i class="fas fa-bolt text-lg text-yellow-500/70 group-hover:text-yellow-500 transition-colors"></i> Reservasi Prioritas
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
+                    <a href="{{ route('dosen.riwayat') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
                         <i class="fas fa-history text-lg group-hover:text-sipblue transition-colors"></i> Riwayat Pengajuan
                     </a>
                 </li>
@@ -81,7 +81,7 @@
                     </div>
                     
                     <div class="relative z-10 shrink-0 w-full md:w-auto">
-                        <a href="{{ url('fasilitas') }}" class="flex justify-center items-center gap-2 w-full md:w-auto bg-sipblue hover:bg-sipbluehover text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-sipblue/30 active:scale-[0.98]">
+                        <a href="{{ route('dosen.reservasi') }}" class="flex justify-center items-center gap-2 w-full md:w-auto bg-sipblue hover:bg-sipbluehover text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-sipblue/30 active:scale-[0.98]">
                             <i class="fas fa-bolt text-yellow-300"></i> Buat Reservasi
                         </a>
                     </div>

@@ -59,11 +59,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/antrean/{id}/status', [App\Http\Controllers\AdminController::class, 'updateStatus'])->name('admin.antrean.status');
     Route::get('/admin/pengguna', [App\Http\Controllers\AdminController::class, 'pengguna'])->name('admin.pengguna');
     Route::post('/admin/pengguna', [App\Http\Controllers\AdminController::class, 'storePengguna'])->name('admin.pengguna.store');
+    // Rute untuk Edit dan Hapus Riwayat Antrean
+    Route::put('/admin/antrean/{id}', [App\Http\Controllers\AdminController::class, 'updateJadwal'])->name('admin.antrean.update');
+    // Rute untuk Edit dan Batalkan Riwayat Antrean
+    Route::put('/admin/antrean/{id}/batal', [App\Http\Controllers\AdminController::class, 'batalkanJadwal'])->name('admin.antrean.batal');
+
+    Route::put('/dosen/riwayat/{id}/batal', [App\Http\Controllers\DosenController::class, 'batalkan'])->name('dosen.riwayat.batal');
     
 
 
     // --- AREA DOSEN & TENDIK ---
     Route::get('/dashboard/dosen', [DosenController::class, 'index'])->name('dosen.dashboard');
+    Route::get('/dosen/fasilitas', [DosenController::class, 'fasilitas'])->name('dosen.fasilitas');
+    Route::get('/dosen/reservasi', [App\Http\Controllers\DosenController::class, 'createReservasi'])->name('dosen.reservasi');
+    Route::post('/dosen/reservasi', [App\Http\Controllers\DosenController::class, 'storeReservasi'])->name('dosen.reservasi.store');
+    Route::get('/dosen/riwayat', [App\Http\Controllers\DosenController::class, 'riwayat'])->name('dosen.riwayat');
 
 
     // --- AREA MAHASISWA ---

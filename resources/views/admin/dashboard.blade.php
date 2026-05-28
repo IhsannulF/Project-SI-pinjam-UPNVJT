@@ -134,11 +134,28 @@
                             @forelse($recent_bookings as $booking)
                             <tr class="hover:bg-sipblue/5 transition-colors group">
                                 <td class="p-4 pl-6 flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs text-white font-bold">
-                                        <i class="fas fa-user"></i>
+                                <!-- Avatar -->
+                                <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs text-white font-bold shrink-0">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                
+                                <!-- Nama & Role -->
+                                <div class="flex flex-col">
+                                    <!-- Nama Peminjam -->
+                                    <span class="text-white font-bold group-hover:text-sipblue transition-colors leading-tight">
+                                        {{ $booking->user->nama_lengkap ?? 'User Dihapus' }}
+                                    </span>
+                                    
+                                    <!-- Label Role -->
+                                    <div class="text-[10px] font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                                        @if(($booking->user->role ?? '') == 'dosen')
+                                            <i class="fas fa-star text-yellow-500"></i> <span class="text-yellow-500">Dosen / Tendik</span>
+                                        @else
+                                            <i class="fas fa-user-graduate text-gray-400"></i> <span class="text-gray-400">Mahasiswa</span>
+                                        @endif
                                     </div>
-                                    <span class="text-white font-bold group-hover:text-sipblue transition-colors">{{ $booking->user->nama_lengkap ?? 'User Dihapus' }}</span>
-                                </td>
+                                </div>
+                            </td>
                                 
                                 <td class="p-4">{{ $booking->fasilitas->nama_fasilitas ?? 'Fasilitas Dihapus' }}</td>
                                 

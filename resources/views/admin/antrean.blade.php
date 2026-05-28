@@ -194,15 +194,40 @@
                                             </td>
                                             <td class="p-4 text-center">
                                                 @if($item->status == 'disetujui')
-                                                    <span class="text-[#00AE1C] text-[11px] font-bold uppercase tracking-wider"><i class="fas fa-check mr-1"></i> Disetujui</span>
-                                                @elseif($item->status == 'ditolak')
-                                                    <span class="text-sipred text-[11px] font-bold uppercase tracking-wider"><i class="fas fa-times mr-1"></i> Ditolak</span>
-                                                @else
-                                                    <span class="text-gray-400 text-[11px] font-bold uppercase tracking-wider">{{ $item->status }}</span>
+                                                    @elseif($item->status == 'ditolak' || $item->status == 'diblokir')
+                                                    @elseif($item->status == 'dibatalkan')
+                                                    <span class="inline-flex items-center gap-1.5 bg-gray-600/10 text-gray-400 border border-gray-600/30 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide">
+                                                        <i class="fas fa-ban"></i> Dibatalkan
+                                                    </span>
                                                 @endif
                                             </td>
-                                            <td class="p-4 text-center">
-                                                <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest"><i class="fas fa-lock mr-1"></i> Selesai</span>
+                                            <!-- Kolom Aksi Riwayat -->
+                                            <td class="py-4 px-6 text-center">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <!-- Tombol Edit Tanggal -->
+                                                    <!-- KITA GUNAKAN DATA- ATTRIBUTE AGAR 100% AMAN DARI ERROR TANDA PETIK -->
+                                                    <button type="button" 
+                                                            data-id="{{ $item->id_peminjaman }}"
+                                                            data-mulai="{{ $item->tanggal_mulai }}"
+                                                            data-akhir="{{ $item->tanggal_berakhir }}"
+                                                            data-nama="{{ $item->user->nama_lengkap ?? 'User' }}"
+                                                            data-fasilitas="{{ $item->fasilitas->nama_fasilitas ?? 'Fasilitas' }}"
+                                                            onclick="bukaModalEdit(this)"
+                                                            class="w-8 h-8 rounded-lg bg-sipblue/10 text-sipblue hover:bg-sipblue hover:text-white flex items-center justify-center transition-colors shadow-sm"
+                                                            title="Edit Tanggal">
+                                                        <i class="fas fa-calendar-day"></i>
+                                                    </button>
+
+                                                    <!-- Tombol Hapus -->
+                                                    <form action="{{ route('admin.antrean.batal', $item->id_peminjaman) }}" method="POST" class="form-batal-riwayat m-0">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="button" 
+                                                                class="btn-batal-riwayat w-8 h-8 rounded-lg bg-sipred/10 text-sipred hover:bg-sipred hover:text-white flex items-center justify-center transition-colors shadow-sm"
+                                                                title="Batalkan Jadwal">
+                                                            <i class="fas fa-times"></i> </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -220,6 +245,52 @@
         </main>
     </div>
 
+    <!-- ==========================================
+         MODAL EDIT JADWAL RIWAYAT
+         ========================================== -->
+    <div id="modalEditJadwal" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer" onclick="tutupModalEdit()"></div>
+        
+        <div class="relative w-full max-w-md bg-sipdark border border-sipborder rounded-3xl shadow-2xl flex flex-col transform scale-95 transition-transform duration-300" id="modalEditContent">
+            
+            <div class="flex items-center justify-between p-6 border-b border-sipborder bg-[#15181f] rounded-t-3xl">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-calendar-edit text-sipblue"></i> Edit Jadwal
+                </h3>
+                <button onclick="tutupModalEdit()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 hover:bg-sipred hover:text-white flex items-center justify-center transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="formEditJadwal" method="POST" class="p-6">
+                @csrf
+                @method('PUT')
+                
+                <div class="mb-5 bg-[#15181f] p-4 rounded-xl border border-gray-700">
+                    <p class="text-xs text-gray-400 mb-1">Peminjam: <span id="editNama" class="text-white font-bold ml-1"></span></p>
+                    <p class="text-xs text-gray-400">Fasilitas: <span id="editFasilitas" class="text-sipblue font-bold ml-1"></span></p>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Tanggal Mulai Baru</label>
+                        <input type="date" name="tanggal_mulai" id="editTglMulai" required class="w-full bg-[#15181f] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipblue [color-scheme:dark]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Tanggal Berakhir Baru</label>
+                        <input type="date" name="tanggal_berakhir" id="editTglBerakhir" required class="w-full bg-[#15181f] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipblue [color-scheme:dark]">
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" onclick="tutupModalEdit()" class="flex-1 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 px-4 py-3 rounded-xl font-bold transition-all">Batal</button>
+                    <button type="submit" class="flex-1 bg-sipblue hover:bg-sipbluehover text-white px-4 py-3 rounded-xl font-bold transition-all shadow-lg shadow-sipblue/30">Update Jadwal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/admin-antrean.js') }}"></script>
 </body>
 </html>

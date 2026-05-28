@@ -27,7 +27,6 @@ window.konfirmasiSetuju = function(button) {
             }
         });
     } else {
-        // Fallback jika CDN SweetAlert gagal dimuat
         if (confirm("Setujui pengajuan ini?")) button.closest('form').submit();
     }
 };
@@ -37,7 +36,7 @@ window.konfirmasiTolak = function(button) {
     if (typeof Swal !== 'undefined') {
         Swal.fire({
             title: 'Tolak Pengajuan?',
-            text: "Jadwal ini akan dibatalkan dan Mahasiswa akan menerima status penolakan.",
+            text: "Jadwal ini akan dibatalkan dan peminjam akan menerima status penolakan.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#DE2828', // Warna Merah
@@ -57,7 +56,88 @@ window.konfirmasiTolak = function(button) {
             }
         });
     } else {
-        // Fallback jika CDN SweetAlert gagal dimuat
         if (confirm("Tolak pengajuan ini?")) button.closest('form').submit();
     }
+}; // <-- INI PENUTUP YANG HILANG SEBELUMNYA
+
+
+// ==========================================
+// LOGIKA KELOLA ANTREAN & RIWAYAT (ADMIN)
+// ==========================================
+
+// 1. Fungsi Buka Modal Edit Tanggal
+window.bukaModalEdit = function(button) {
+    const id = button.getAttribute('data-id');
+    const tglMulai = button.getAttribute('data-mulai');
+    const tglBerakhir = button.getAttribute('data-akhir');
+    const nama = button.getAttribute('data-nama');
+    const fasilitas = button.getAttribute('data-fasilitas');
+
+    const modal = document.getElementById('modalEditJadwal');
+    const content = document.getElementById('modalEditContent');
+    const form = document.getElementById('formEditJadwal');
+
+    if (modal && content && form) {
+        form.action = `/admin/antrean/${id}`;
+
+        document.getElementById('editNama').innerText = nama;
+        document.getElementById('editFasilitas').innerText = fasilitas;
+        
+        document.getElementById('editTglMulai').value = tglMulai.split(' ')[0];
+        document.getElementById('editTglBerakhir').value = tglBerakhir.split(' ')[0];
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
+    }
 };
+
+// 2. Fungsi Tutup Modal Edit
+window.tutupModalEdit = function() {
+    const modal = document.getElementById('modalEditJadwal');
+    const content = document.getElementById('modalEditContent');
+
+    if (modal && content) {
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 300);
+    }
+};
+
+// 3. Peringatan Batalkan Jadwal (SweetAlert2)
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-batal-riwayat').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const form = this.closest('form');
+            
+            Swal.fire({
+                title: 'Batalkan Jadwal?',
+                text: "Status pengajuan ini akan diubah menjadi 'Dibatalkan' dan kalender akan kembali kosong.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DE2828',
+                cancelButtonColor: '#374151',
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Kembali',
+                background: '#15181f',
+                color: '#fff',
+                customClass: {
+                    popup: 'rounded-3xl border border-gray-700 shadow-2xl',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        });
+    });
+});
