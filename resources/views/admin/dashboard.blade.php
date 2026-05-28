@@ -115,66 +115,77 @@
                         <h5 class="text-lg font-bold text-white flex items-center gap-2">
                             <i class="fas fa-list-alt text-sipblue"></i> Pengajuan Peminjaman Terbaru
                         </h5>
-                        <a href="#" class="text-sm font-semibold text-sipblue hover:text-white transition-colors">Lihat Semua &rarr;</a>
+                        <a href="{{ url('admin/antrean') }}" class="text-sm font-semibold text-sipblue hover:text-white transition-colors">Lihat Semua &rarr;</a>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-sipbg border-b border-sipborder text-xs font-bold text-siptext uppercase tracking-wider">
-                                    <th class="p-4 pl-6">ID Peminjam</th>
-                                    <th class="p-4">Fasilitas</th>
-                                    <th class="p-4">Tanggal</th>
-                                    <th class="p-4">Status</th>
-                                    <th class="p-4 pr-6 text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm font-medium text-gray-300 divide-y divide-sipborder">
+                        <thead>
+                            <tr class="bg-sipbg border-b border-sipborder text-xs font-bold text-siptext uppercase tracking-wider">
+                                <th class="p-4 pl-6">Nama Peminjam</th>
+                                <th class="p-4">Fasilitas</th>
+                                <th class="p-4">Tanggal</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 pr-6 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-medium text-gray-300 divide-y divide-sipborder">
+                            
+                            @forelse($recent_bookings as $booking)
+                            <tr class="hover:bg-sipblue/5 transition-colors group">
+                                <td class="p-4 pl-6 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs text-white font-bold">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <span class="text-white font-bold group-hover:text-sipblue transition-colors">{{ $booking->user->nama_lengkap ?? 'User Dihapus' }}</span>
+                                </td>
                                 
-                                @forelse($recent_bookings as $booking)
-                                <tr class="hover:bg-sipblue/5 transition-colors group">
-                                    <td class="p-4 pl-6 flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs text-white font-bold">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <span class="text-white group-hover:text-sipblue transition-colors">User ID: {{ $booking->id_user ?? 'Admin/Umum' }}</span>
-                                    </td>
-                                    <td class="p-4">{{ $booking->fasilitas->nama_fasilitas }}</td>
-                                    <td class="p-4 text-siptext">{{ date('d M Y', strtotime($booking->tanggal_pinjam)) }}</td>
-                                    <td class="p-4">
-                                        @if($booking->status == 'pending')
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5 animate-pulse"></span> Pending
-                                            </span>
-                                        @elseif($booking->status == 'disetujui')
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/20">
-                                                <i class="fas fa-check mr-1"></i> Disetujui
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-gray-500/10 text-gray-400 border border-gray-500/20">
-                                                {{ ucfirst($booking->status) }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="p-4 pr-6">
-                                        <div class="flex justify-center gap-2">
-                                            <button class="w-8 h-8 rounded-lg bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/30 hover:bg-[#00AE1C] hover:text-white flex items-center justify-center transition-all" title="Setujui">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button class="w-8 h-8 rounded-lg bg-sipred/10 text-sipred border border-sipred/30 hover:bg-sipred hover:text-white flex items-center justify-center transition-all" title="Tolak">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="p-8 text-center text-siptext">Belum ada pengajuan peminjaman saat ini.</td>
-                                </tr>
-                                @endforelse
+                                <td class="p-4">{{ $booking->fasilitas->nama_fasilitas ?? 'Fasilitas Dihapus' }}</td>
+                                
+                                <td class="p-4 text-siptext">
+                                    @if($booking->tanggal_mulai == $booking->tanggal_berakhir)
+                                        {{ \Carbon\Carbon::parse($booking->tanggal_mulai)->format('d M Y') }}
+                                    @else
+                                        {{ \Carbon\Carbon::parse($booking->tanggal_mulai)->format('d M') }} s/d {{ \Carbon\Carbon::parse($booking->tanggal_berakhir)->format('d M Y') }}
+                                    @endif
+                                </td>
+                                
+                                <td class="p-4">
+                                    @if($booking->status == 'menunggu')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5 animate-pulse"></span> Menunggu
+                                        </span>
+                                    @elseif($booking->status == 'disetujui')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/20">
+                                            <i class="fas fa-check mr-1"></i> Disetujui
+                                        </span>
+                                    @elseif($booking->status == 'ditolak')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-sipred/10 text-sipred border border-sipred/20">
+                                            <i class="fas fa-times mr-1"></i> Ditolak
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-gray-500/10 text-gray-400 border border-gray-500/20">
+                                            {{ ucfirst($booking->status) }}
+                                        </span>
+                                    @endif
+                                </td>
+                                
+                                <td class="p-4 pr-6">
+                                    <div class="flex justify-center gap-2">
+                                        <a href="{{ route('admin.antrean') }}" class="w-8 h-8 rounded-lg bg-sipblue/10 text-sipblue border border-sipblue/30 hover:bg-sipblue hover:text-white flex items-center justify-center transition-all shadow-lg" title="Lihat di Antrean">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-siptext">Belum ada pengajuan peminjaman saat ini.</td>
+                            </tr>
+                            @endforelse
 
-                            </tbody>
-                        </table>
+                        </tbody>
+                    </table>
                     </div>
                 </div>
 

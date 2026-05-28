@@ -167,14 +167,20 @@ class AdminController extends Controller
     // 1. Menampilkan Halaman Antrean Pinjaman
     public function antrean()
     {
-        // Mengambil semua data peminjaman beserta relasi user dan fasilitas
-        // Diurutkan berdasarkan status (pending di atas) lalu ID terbaru
-        $peminjaman = \App\Models\Peminjaman::with(['user', 'fasilitas'])
-                        ->orderByRaw("FIELD(status, 'pending', 'disetujui', 'ditolak')")
-                        ->orderBy('id_peminjaman', 'desc')
-                        ->get();
+        // 1. Antrean Baru (Terbaru di atas)
+        $antrean_baru = \App\Models\Peminjaman::with(['user', 'fasilitas'])
+                            ->where('status', 'menunggu')
+                            ->orderBy('id_peminjaman', 'desc')
+                            ->get();
 
-        return view('admin.antrean', compact('peminjaman'));
+        // 2. Riwayat (Terbaru di atas)
+        $riwayat_proses = \App\Models\Peminjaman::with(['user', 'fasilitas'])
+                            ->whereIn('status', ['disetujui', 'ditolak', 'diblokir'])
+                            // UBAH BARIS DI BAWAH INI: Ganti 'updated_at' menjadi 'id_peminjaman'
+                            ->orderBy('id_peminjaman', 'desc') 
+                            ->get();
+
+        return view('admin.antrean', compact('antrean_baru', 'riwayat_proses'));
     }
 
     // 2. Memproses Perubahan Status (Terima / Tolak)

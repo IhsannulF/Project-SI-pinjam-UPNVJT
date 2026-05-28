@@ -37,3 +37,29 @@
     cursor: not-allowed;
   }
 }
+
+/* ==========================================
+   4. KUSTOMISASI SCROLLBAR GLOBAL SI-PINJAM
+   ========================================== */
+
+/* Mengatur lebar scrollbar vertikal & tinggi scrollbar horizontal */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Warna jalur (track) di belakang scrollbar */
+::-webkit-scrollbar-track {
+  background: var(--color-sipdark); /* Memakai warna dark dari theme */
+}
+
+/* Warna batang scrollbar (thumb) */
+::-webkit-scrollbar-thumb {
+  background: var(--color-sipborder); /* Memakai warna border dari theme */
+  border-radius: 10px;
+}
+
+/* Efek menyala saat kursor diarahkan ke scrollbar (Hover) */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sipblue); /* Memakai warna biru andalan SI-PINJAM */
+}

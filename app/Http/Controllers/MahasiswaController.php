@@ -50,7 +50,7 @@ class MahasiswaController extends Controller
         // 2. [VALIDASI SISTEM] Cek Bentrok Jadwal Rentang Waktu!
         // Algoritma: Jadwal bentrok jika (Mulai Baru <= Berakhir Lama) DAN (Berakhir Baru >= Mulai Lama)
         $cek_bentrok = Peminjaman::where('id_fasilitas', $request->id_fasilitas)
-            ->whereIn('status', ['pending', 'disetujui', 'diblokir'])
+            ->whereIn('status', ['menunggu', 'disetujui', 'diblokir'])
             ->where(function ($query) use ($request) {
                 $query->where('tanggal_mulai', '<=', $request->tanggal_berakhir)
                       ->where('tanggal_berakhir', '>=', $request->tanggal_mulai);
@@ -61,14 +61,14 @@ class MahasiswaController extends Controller
             return back()->with('error', 'Validasi Sistem Gagal: Maaf, fasilitas ini sudah dipesan atau diblokir pada rentang tanggal tersebut. Silakan pilih jadwal lain.');
         }
 
-        // 3. Simpan Data Peminjaman (Status otomatis: pending)
+        // 3. Simpan Data Peminjaman (Status otomatis: menunggu)
         Peminjaman::create([
             'id_fasilitas'     => $request->id_fasilitas,
             'id_user'          => Auth::id(),
             'tanggal_mulai'    => $request->tanggal_mulai,
             'tanggal_berakhir' => $request->tanggal_berakhir,
             'keperluan'        => $request->keperluan,
-            'status'           => 'pending' 
+            'status'           => 'menunggu' 
         ]);
 
         // 4. Arahkan kembali dengan pesan sukses

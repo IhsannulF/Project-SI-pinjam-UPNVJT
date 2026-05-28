@@ -102,9 +102,11 @@
                         <button id="prevMonth" class="w-12 h-12 flex items-center justify-center text-siptext hover:text-white hover:bg-sipborder rounded-full transition-all bg-sipbg border border-sipborder">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <h3 id="calendarMonthYear" class="text-2xl font-extrabold text-white tracking-wide m-0">
-                            Bulan Tahun
+                        
+                        <h3 id="calendarMonthYear" class="text-2xl font-extrabold text-white tracking-wide m-0 uppercase text-center leading-relaxed">
+                            PILIH FASILITAS
                         </h3>
+
                         <button id="nextMonth" class="w-12 h-12 flex items-center justify-center text-siptext hover:text-white hover:bg-sipborder rounded-full transition-all bg-sipbg border border-sipborder">
                             <i class="fas fa-chevron-right"></i>
                         </button>
