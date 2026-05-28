@@ -148,8 +148,10 @@
                                     
                                     <!-- Label Role -->
                                     <div class="text-[10px] font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                                        @if(($booking->user->role ?? '') == 'dosen')
+                                        @if(strtolower($booking->user->role ?? '') == 'dosen' || strtolower($booking->user->role ?? '') == 'tendik')
                                             <i class="fas fa-star text-yellow-500"></i> <span class="text-yellow-500">Dosen / Tendik</span>
+                                        @elseif(strtolower($booking->user->role ?? '') == 'umum' || strtolower($booking->user->role ?? '') == 'eksternal')
+                                            <i class="fas fa-building text-sipblue"></i> <span class="text-sipblue">Instansi / Eksternal</span>
                                         @else
                                             <i class="fas fa-user-graduate text-gray-400"></i> <span class="text-gray-400">Mahasiswa</span>
                                         @endif

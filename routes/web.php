@@ -87,3 +87,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mahasiswa/riwayat', [App\Http\Controllers\MahasiswaController::class, 'riwayat'])->name('mahasiswa.riwayat');
 
 });
+
+// ==========================================
+// ROLE: PIHAK EKSTERNAL
+// ==========================================
+Route::middleware(['auth'])->group(function () {
+    // Rute Dashboard
+    Route::get('/eksternal/dashboard', [App\Http\Controllers\EksternalController::class, 'dashboard'])->name('eksternal.dashboard');
+    
+    // Rute Reservasi (Form & Submit)
+    Route::get('/eksternal/reservasi', [App\Http\Controllers\EksternalController::class, 'formReservasi'])->name('eksternal.reservasi');
+    Route::post('/eksternal/reservasi', [App\Http\Controllers\EksternalController::class, 'storeReservasi'])->name('eksternal.reservasi.store');
+    
+    // Rute Riwayat
+    Route::get('/eksternal/riwayat', [App\Http\Controllers\EksternalController::class, 'riwayat'])->name('eksternal.riwayat');
+
+    Route::get('/eksternal/cari-fasilitas', [App\Http\Controllers\EksternalController::class, 'cariFasilitas'])->name('eksternal.cari_fasilitas');
+
+    // Rute Informasi & Template MoU
+    Route::get('/eksternal/informasi', [App\Http\Controllers\EksternalController::class, 'informasi'])->name('eksternal.informasi');
+});

@@ -55,4 +55,78 @@ class EksternalController extends Controller
 
         return redirect()->back()->with('success', 'Pengajuan berhasil dikirim! Menunggu validasi Admin.');
     }
+
+   // 3. Menampilkan Dashboard Eksternal
+    public function dashboard()
+    {
+        $userId = Auth::id();
+        
+        // Hitung Statistik
+        $stat_pending = Peminjaman::where('id_user', $userId)->whereIn('status', ['menunggu', 'pending'])->count();
+        $stat_disetujui = Peminjaman::where('id_user', $userId)->where('status', 'disetujui')->count();
+        $stat_ditolak = Peminjaman::where('id_user', $userId)->where('status', 'ditolak')->count();
+        $dibatalkan = Peminjaman::where('id_user', $userId)->where('status', 'dibatalkan')->count();
+
+        // Ambil Data Terakhir (Diperbaiki: Ganti latest() dengan orderBy)
+        $pengajuan_terakhir = Peminjaman::with('fasilitas')->where('id_user', $userId)->orderBy('id_peminjaman', 'desc')->first();
+        $riwayat_singkat = Peminjaman::with('fasilitas')->where('id_user', $userId)->orderBy('id_peminjaman', 'desc')->take(5)->get();
+
+        return view('eksternal.dashboard', compact(
+            'stat_pending', 'stat_disetujui', 'stat_ditolak', 'dibatalkan', 'pengajuan_terakhir', 'riwayat_singkat'
+        ));
+    }
+
+    // 4. Menampilkan Halaman Riwayat Eksternal Lengkap
+    public function riwayat()
+    {
+        $userId = Auth::id();
+        
+        // (Diperbaiki: Ganti latest() dengan orderBy)
+        $riwayat = Peminjaman::with('fasilitas')->where('id_user', $userId)->orderBy('id_peminjaman', 'desc')->get();
+        
+        return view('eksternal.riwayat', compact('riwayat'));
+    }
+
+    // 5. Menampilkan Halaman Cari Fasilitas & Kalender Eksternal
+    public function cariFasilitas()
+    {
+        // 1. Ambil daftar fasilitas (HANYA UNTUK EKSTERNAL: GSG, Lapangan, Umum)
+        $fasilitas = Fasilitas::whereIn('kategori', ['GSG', 'Lapangan', 'Olahraga', 'Umum'])->get();
+        
+        // 2. Ambil jadwal booking untuk fasilitas tersebut
+        $peminjaman = Peminjaman::whereHas('fasilitas', function($q) {
+                $q->whereIn('kategori', ['GSG', 'Lapangan', 'Olahraga', 'Umum']);
+            })
+            ->whereIn('status', ['disetujui', 'pending', 'menunggu', 'diblokir'])
+            ->get();
+
+        // 3. Format struktur array SAMA PERSIS dengan format Mahasiswa (Looping per hari)
+        $events = [];
+        
+        foreach ($peminjaman as $p) {
+            $id = $p->id_fasilitas;
+            
+            // Konversi ke Carbon agar bisa di-loop per hari
+            $start = \Carbon\Carbon::parse($p->tanggal_mulai ?? $p->tanggal_pinjam);
+            // Jika tanggal berakhir kosong, samakan dengan tanggal mulai (booking 1 hari)
+            $end = $p->tanggal_berakhir ? \Carbon\Carbon::parse($p->tanggal_berakhir) : $start->copy();
+            
+            // Loop untuk setiap hari di rentang waktu booking
+            for ($date = $start; $date->lte($end); $date->addDay()) {
+                $tanggal = $date->format('Y-m-d');
+                // Masukkan format JSON: events[id_fasilitas][tanggal] = alasan
+                $events[$id][$tanggal] = $p->keperluan ?? 'Telah dibooking / penuh';
+            }
+        }
+
+        // Kirim $events ini, lalu di file Blade (.blade.php) 
+        // akan dikonversi ke JSON dan ditangkap oleh window.dataJadwalBooking
+        return view('eksternal.cari_fasilitas', compact('fasilitas', 'events'));
+    }
+
+    // 6. Menampilkan Halaman Panduan, Download MoU, dan Info Pembayaran
+    public function informasi()
+    {
+        return view('eksternal.informasi');
+    }
 }

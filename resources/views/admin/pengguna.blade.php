@@ -187,7 +187,7 @@
                                 <option value="" disabled selected>-- Pilih Role Pengguna --</option>
                                 <option value="mahasiswa">Mahasiswa / UKM</option>
                                 <option value="dosen">Dosen / Tendik</option>
-                                <option value="eksternal">Umum / Eksternal</option>
+                                <option value="umum">Umum / Eksternal</option>
                                 <option value="admin">Administrator</option>
                             </select>
                             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-xs"></i>

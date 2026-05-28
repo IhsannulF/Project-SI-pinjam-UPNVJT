@@ -44,15 +44,18 @@
             @endif
 
             <form action="{{ route('login.post') }}" method="POST" class="space-y-5">
-                @csrf <div>
-                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username (NPM / NIP / NIK)</label>
+                @csrf 
+                
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Nomor Induk (NPM / NIP / NIK)</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="fas fa-user text-siptext"></i>
                         </div>
-                        <input type="text" id="username" name="username" placeholder="Masukkan identitas Anda" required autocomplete="off" 
+                        <input type="text" id="username" name="username" placeholder="Masukkan NPM, NIP, atau NIK" required autocomplete="off" 
                             class="w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-sipblue focus:ring-1 focus:ring-sipblue transition-all">
                     </div>
+                    <p class="text-[11px] text-gray-500 mt-1.5 ml-1"><i class="fas fa-info-circle mr-1"></i>Instansi/Eksternal silakan gunakan 16-Digit NIK KTP.</p>
                 </div>
                 
                 <div>

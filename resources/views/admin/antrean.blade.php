@@ -178,14 +178,15 @@
                                         <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
                                             <td class="p-4">
                                                 <div class="font-bold text-gray-300">{{ $item->user->nama_lengkap ?? 'User Dihapus' }}</div>
-                                            </td>
-                                            <td class="p-4">
-                                                <div class="font-bold text-gray-400">{{ $item->fasilitas->nama_fasilitas ?? 'Fasilitas Dihapus' }}</div>
-                                                <div class="text-[11px] text-gray-500 mt-0.5">
-                                                    @if($item->tanggal_mulai == $item->tanggal_berakhir)
-                                                        {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}
-                                                    @else
-                                                        {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M') }} - {{ \Carbon\Carbon::parse($item->tanggal_berakhir)->format('d M Y') }}
+                                                
+                                                <!-- TAMBAHAN LABEL ROLE -->
+                                                <div class="text-[10px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1.5">
+                                                    @if(strtolower($item->user->role ?? '') == 'dosen' || strtolower($item->user->role ?? '') == 'tendik')
+                                                        <i class="fas fa-star text-yellow-500"></i> <span class="text-yellow-500">Dosen / Tendik</span>
+                                                    @elseif(strtolower($item->user->role ?? '') == 'umum' || strtolower($item->user->role ?? '') == 'eksternal')
+                                                        <i class="fas fa-building text-sipblue"></i> <span class="text-sipblue">Instansi / Eksternal</span>
+                                                    @elseif(strtolower($item->user->role ?? '') == 'mahasiswa')
+                                                        <i class="fas fa-user-graduate text-gray-400"></i> <span class="text-gray-400">Mahasiswa</span>
                                                     @endif
                                                 </div>
                                             </td>

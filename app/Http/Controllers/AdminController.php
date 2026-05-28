@@ -217,7 +217,7 @@ class AdminController extends Controller
             'identitas'    => 'required|string|max:50|unique:users,identitas', // Tambahan validasi identitas
             'email'        => 'required|string|email|max:255|unique:users,email', 
             'password'     => 'required|string|min:8',
-            'role'         => 'required|in:admin,dosen,mahasiswa,eksternal',
+            'role'         => 'required|in:admin,dosen,mahasiswa,umum',
         ]);
 
         // Simpan ke database

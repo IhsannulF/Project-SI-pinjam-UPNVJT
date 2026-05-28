@@ -113,15 +113,29 @@
                                             </div>
                                         </td>
                                         
-                                        <td class="p-4 text-center">
-                                           @if($item->status == 'disetujui')
-                                                @elseif($item->status == 'menunggu')
-                                                @elseif($item->status == 'dibatalkan')
+                                        <td class="py-5 px-4 align-middle text-right">
+                                            @if(strtolower($item->status) == 'pending' || strtolower($item->status) == 'menunggu')
+                                                <span class="inline-flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide">
+                                                    <i class="fas fa-hourglass-half"></i> Menunggu
+                                                </span>
+                                            @elseif(strtolower($item->status) == 'disetujui')
+                                                <span class="inline-flex items-center gap-1.5 bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/20 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide">
+                                                    <i class="fas fa-check-circle"></i> Disetujui
+                                                </span>
+                                            @elseif(strtolower($item->status) == 'ditolak')
+                                                <span class="inline-flex items-center gap-1.5 bg-sipred/10 text-sipred border border-sipred/20 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide">
+                                                    <i class="fas fa-ban"></i> Ditolak
+                                                </span>
+                                            @elseif(strtolower($item->status) == 'dibatalkan')
                                                 <span class="inline-flex items-center gap-1.5 bg-gray-600/10 text-gray-400 border border-gray-600/30 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide">
-                                                    <i class="fas fa-ban"></i> Dibatalkan
+                                                    <i class="fas fa-times-circle"></i> Dibatalkan
                                                 </span>
                                             @else
-                                                @endif
+                                                <!-- Fallback jika ada status tidak terduga di database -->
+                                                <span class="inline-flex items-center gap-1.5 bg-gray-600/10 text-gray-400 border border-gray-600/30 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide">
+                                                    <i class="fas fa-info-circle"></i> {{ $item->status }}
+                                                </span>
+                                            @endif
                                         </td>
 
                                     </tr>
