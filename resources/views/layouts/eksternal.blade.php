@@ -39,7 +39,13 @@
                 </li>
                 <li>
                     <a href="{{ route('eksternal.cari_fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl {{ request()->routeIs('eksternal.cari_fasilitas') ? 'bg-sipblue/10 text-sipblue border-sipblue/20' : 'text-siptext hover:bg-sipborder/50 hover:text-white border-transparent' }} font-semibold border transition-all">
-                        <i class="fas fa-search text-lg"></i> Cari Fasilitas
+                        <i class="fas fa-calendar-alt text-lg"></i> Cari Jadwal Kosong
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('eksternal.detail_fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl {{ request()->routeIs('eksternal.detail_fasilitas') ? 'bg-sipblue/10 text-sipblue border-sipblue/20' : 'text-siptext hover:bg-sipborder/50 hover:text-white border-transparent' }} font-semibold border transition-all">
+                        <i class="fas fa-building text-lg"></i> Detail & Harga
                     </a>
                 </li>
                 <li>

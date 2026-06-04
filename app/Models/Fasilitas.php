@@ -22,6 +22,7 @@ class Fasilitas extends Model
         'kapasitas', 
         'ikon', 
         'foto_fasilitas', 
-        'status'
+        'status',
+        'harga_per_hari',
     ]; 
 }

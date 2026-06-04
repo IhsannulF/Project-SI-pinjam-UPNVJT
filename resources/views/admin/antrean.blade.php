@@ -1,60 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antrean Pinjaman - Admin SI-PINJAM</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/Logo-SI-Pinjam.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    @vite('resources/css/app.css')
-</head>
-<body class="bg-sipbg text-white font-sans antialiased overflow-hidden selection:bg-sipblue selection:text-white">
+@extends('layouts.admin')
+
+@section('content')
+
 
     <div class="flex h-screen w-full">
 
-        <nav class="w-72 bg-sipdark border-r border-sipborder flex flex-col shrink-0 transition-all duration-300">
-            <div class="p-8 border-b border-sipborder">
-                <h3 class="text-2xl font-bold tracking-wide mb-1">SI-PINJAM</h3>
-                <p class="text-xs font-bold text-sipblue uppercase tracking-widest">Panel Administrator</p>
-            </div>
-
-            <ul class="flex-1 py-6 px-4 space-y-2 overflow-y-auto [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder">
-                <li>
-                    <a href="{{ url('admin/dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-home text-lg group-hover:text-sipblue transition-colors"></i> Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('admin/fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-building text-lg group-hover:text-sipblue transition-colors"></i> Kelola Fasilitas
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.antrean') }}" class="flex items-center justify-between px-4 py-3 rounded-xl bg-sipblue/10 text-sipblue font-semibold border border-sipblue/20 transition-all">
-                        <div class="flex items-center gap-4"><i class="fas fa-clipboard-list text-lg"></i> Antrean Pinjaman</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-users text-lg group-hover:text-sipblue transition-colors"></i> Data Pengguna
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('home') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-external-link-alt text-lg group-hover:text-sipblue transition-colors"></i> Lihat Situs
-                    </a>
-                </li>
-            </ul>
-
-            <div class="p-4 border-t border-sipborder">
-                <a href="{{ url('logout') }}" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-sipred/50 text-sipred bg-sipred/5 hover:bg-sipred hover:text-white font-semibold transition-all shadow-[0_0_15px_rgba(222,40,40,0.1)]">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
-                </a>
-            </div>
-        </nav>
 
         <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-sipbg to-[#15181f]">
             
@@ -73,6 +23,19 @@
                 @if(session('success'))
                     <div class="bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/30 px-4 py-3 rounded-xl mb-6 text-sm font-bold flex items-center gap-2 max-w-4xl">
                         <i class="fas fa-check-circle"></i> {{ session('success') }}
+                    </div>
+                @endif
+                
+                @if($errors->any())
+                    <div class="bg-sipred/10 text-sipred border border-sipred/30 px-4 py-3 rounded-xl mb-6 text-sm font-bold max-w-4xl">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-exclamation-triangle"></i> Gagal Memproses!
+                        </div>
+                        <ul class="list-disc list-inside font-normal text-xs ml-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endif
 
@@ -99,6 +62,16 @@
                                 </thead>
                                 <tbody class="text-sm">
                                     @forelse($antrean_baru as $item)
+                                        
+                                        <!-- LOGIKA PERHITUNGAN TAGIHAN UNTUK ADMIN -->
+                                        @php
+                                            $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai);
+                                            $tglAkhir = \Carbon\Carbon::parse($item->tanggal_berakhir ?? $item->tanggal_mulai);
+                                            $lamaSewa = $tglMulai->diffInDays($tglAkhir) + 1;
+                                            $hargaAsli = $item->fasilitas->harga_per_hari ?? 0;
+                                            $totalBiaya = $lamaSewa * $hargaAsli;
+                                        @endphp
+
                                         <tr class="border-b border-gray-700/50 hover:bg-sipblue/5 transition-colors">
                                             <td class="p-4">
                                                 <div class="font-bold text-white">{{ $item->user->nama_lengkap ?? 'User Dihapus' }}</div>
@@ -116,20 +89,66 @@
                                                 </div>
                                             </td>
                                             <td class="p-4">
-                                                <div class="text-xs text-gray-300 max-w-[250px] truncate" title="{{ $item->keperluan }}">{{ $item->keperluan }}</div>
+                                                <div class="text-xs text-gray-300 max-w-[250px] truncate mb-1" title="{{ $item->keperluan }}">{{ $item->keperluan }}</div>
+                                                
+                                                @if($item->dokumen_mou)
+                                                    <a href="{{ asset('uploads/mou/'.$item->dokumen_mou) }}" target="_blank" class="text-[10px] bg-gray-800 hover:bg-sipblue/20 text-sipblue px-2 py-1 rounded inline-flex items-center gap-1 transition-colors mt-1">
+                                                        <i class="fas fa-file-pdf"></i> Lihat MoU
+                                                    </a>
+                                                @endif
+                                                @if($item->bukti_bayar)
+                                                    <a href="{{ asset('uploads/bukti_bayar/'.$item->bukti_bayar) }}" target="_blank" class="text-[10px] bg-gray-800 hover:bg-[#00AE1C]/20 text-[#00AE1C] px-2 py-1 rounded inline-flex items-center gap-1 transition-colors mt-1 ml-1">
+                                                        <i class="fas fa-receipt"></i> Bukti Bayar
+                                                    </a>
+                                                @endif
                                             </td>
                                             <td class="p-4 text-center">
-                                                <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider shadow-sm animate-pulse"><i class="fas fa-hourglass-half mr-1"></i> Menunggu</span>
+                                                @if($item->status == 'Menunggu Verifikasi MoU')
+                                                    <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider shadow-sm animate-pulse"><i class="fas fa-file-signature mr-1"></i> Cek MoU</span>
+                                                @elseif($item->status == 'Menunggu Konfirmasi Jadwal')
+                                                    <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider shadow-sm animate-pulse"><i class="fas fa-money-check-alt mr-1"></i> Cek Bayar</span>
+                                                @else
+                                                    <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider shadow-sm animate-pulse"><i class="fas fa-hourglass-half mr-1"></i> Menunggu</span>
+                                                @endif
                                             </td>
                                             <td class="p-4 text-center">
                                                 <div class="flex items-center justify-center gap-2">
-                                                    <form action="{{ route('admin.antrean.status', $item->id_peminjaman) }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="disetujui">
-                                                        <button type="button" onclick="konfirmasiSetuju(this)" class="w-8 h-8 rounded-lg bg-[#00AE1C]/10 text-[#00AE1C] hover:bg-[#00AE1C] hover:text-white transition-colors flex items-center justify-center shadow-lg" title="Setujui">
-                                                            <i class="fas fa-check"></i>
+                                                    
+                                                    @if($item->status == 'Menunggu Verifikasi MoU')
+                                                        <!-- TOMBOL TRIGGER POP-UP TAGIHAN (Form dihapus) -->
+                                                        <button type="button" 
+                                                            data-url="{{ route('admin.antrean.status', $item->id_peminjaman) }}"
+                                                            data-nama="{{ $item->user->nama_lengkap ?? 'Instansi Eksternal' }}"
+                                                            data-fasilitas="{{ $item->fasilitas->nama_fasilitas ?? 'Fasilitas' }}"
+                                                            data-lama="{{ $lamaSewa }}"
+                                                            data-harga="{{ $hargaAsli }}"
+                                                            data-total="{{ $totalBiaya }}"
+                                                            onclick="bukaModalTagihan(this)" 
+                                                            class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white transition-colors flex items-center justify-center shadow-lg" 
+                                                            title="Setujui MoU & Terbitkan Tagihan">
+                                                            <i class="fas fa-file-invoice-dollar"></i>
                                                         </button>
-                                                    </form>
+
+                                                    @elseif($item->status == 'Menunggu Konfirmasi Jadwal')
+                                                        <form action="{{ route('admin.antrean.status', $item->id_peminjaman) }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="status" value="disetujui">
+                                                            <button type="button" onclick="konfirmasiSetuju(this)" class="w-8 h-8 rounded-lg bg-[#00AE1C]/10 text-[#00AE1C] hover:bg-[#00AE1C] hover:text-white transition-colors flex items-center justify-center shadow-lg" title="Konfirmasi Lunas & Kunci Jadwal">
+                                                                <i class="fas fa-check-double"></i>
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <!-- Tombol Setuju Default (Untuk Mahasiswa/Dosen) -->
+                                                        <form action="{{ route('admin.antrean.status', $item->id_peminjaman) }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="status" value="disetujui">
+                                                            <button type="button" onclick="konfirmasiSetuju(this)" class="w-8 h-8 rounded-lg bg-[#00AE1C]/10 text-[#00AE1C] hover:bg-[#00AE1C] hover:text-white transition-colors flex items-center justify-center shadow-lg" title="Setujui Langsung">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+
+                                                    <!-- Tombol Tolak -->
                                                     <form action="{{ route('admin.antrean.status', $item->id_peminjaman) }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="status" value="ditolak">
@@ -291,7 +310,61 @@
         </div>
     </div>
 
+    <!-- ==========================================
+     MODAL TERBITKAN TAGIHAN (ADMIN)
+     ========================================== -->
+    <div id="modalTagihan" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer" onclick="tutupModalTagihan()"></div>
+        
+        <div class="relative w-full max-w-md bg-sipdark border border-sipborder rounded-3xl shadow-2xl flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="modalTagihanContent">
+            
+            <div class="flex items-center justify-between p-6 border-b border-sipborder bg-[#15181f] rounded-t-3xl">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-file-invoice-dollar text-purple-500"></i> Review Tagihan
+                </h3>
+                <button onclick="tutupModalTagihan()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 hover:bg-sipred hover:text-white flex items-center justify-center transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="formTerbitkanTagihan" method="POST" class="p-6">
+                @csrf
+                <!-- Ini yang akan mengubah statusnya saat form disubmit -->
+                <input type="hidden" name="status" value="Menunggu Pembayaran">
+                
+                <div class="bg-[#15181f] rounded-xl border border-gray-700 p-5 mb-6">
+                    <p class="text-xs text-gray-400 mb-1">Peminjam: <span id="tagihan_nama" class="text-white font-bold ml-1"></span></p>
+                    <p class="text-xs text-gray-400 mb-4 pb-3 border-b border-gray-700/50">Fasilitas: <span id="tagihan_fasilitas" class="text-sipblue font-bold ml-1"></span></p>
+                    
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-400">Lama Sewa</span>
+                        <span class="text-sm font-bold text-white" id="tagihan_lama"></span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm text-gray-400">Harga Per Hari</span>
+                        <span class="text-sm font-bold text-white" id="tagihan_harga"></span>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-700 border-dashed">
+                        <span class="text-sm font-bold text-white">Total Tagihan</span>
+                        <span class="text-xl font-extrabold text-purple-500" id="tagihan_total"></span>
+                    </div>
+                </div>
+
+                <div class="bg-purple-500/10 border border-purple-500/20 text-purple-400 px-4 py-3 rounded-xl mb-6 text-xs font-medium flex items-start gap-3">
+                    <i class="fas fa-info-circle mt-0.5 text-base"></i>
+                    <p>Jika diterbitkan, status pengajuan akan berubah dan pihak instansi akan diminta untuk mentransfer sesuai nominal di atas.</p>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" onclick="tutupModalTagihan()" class="flex-1 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 px-4 py-3 rounded-xl font-bold transition-all">Batal</button>
+                    <button type="submit" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-xl font-bold transition-all shadow-lg shadow-purple-500/30">Terbitkan Tagihan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/admin-antrean.js') }}"></script>
-</body>
-</html>
+@endsection

@@ -16,7 +16,15 @@ class AdminController extends Controller
     // --- 1. HALAMAN DASHBOARD ---
     public function index()
     {
-        $count_pending = Peminjaman::where('status', 'pending')->count();
+        // Menggabungkan semua status yang perlu diproses ke dalam hitungan "Pending"
+        $count_pending = Peminjaman::whereIn('status', [
+            'pending', 
+            'menunggu', 
+            'Menunggu Verifikasi MoU', 
+            'Menunggu Pembayaran', 
+            'Menunggu Konfirmasi Jadwal'
+        ])->count();
+
         $count_disetujui = Peminjaman::where('status', 'disetujui')->count();
         $count_fasilitas = Fasilitas::count();
 
@@ -167,18 +175,25 @@ class AdminController extends Controller
     // 1. Menampilkan Halaman Antrean Pinjaman
     public function antrean()
     {
-        // 1. Antrean Baru (Terbaru di atas)
-        $antrean_baru = \App\Models\Peminjaman::with(['user', 'fasilitas'])
-                            ->where('status', 'menunggu')
-                            ->orderBy('id_peminjaman', 'desc')
-                            ->get();
+        // 1. Antrean Baru (Belum selesai diproses)
+        // DITAMBAHKAN: 'Menunggu Pembayaran' agar data tidak hilang dari pengawasan Admin
+        $antrean_baru = Peminjaman::with(['user', 'fasilitas'])
+            ->whereIn('status', [
+                'menunggu', 
+                'pending', 
+                'Menunggu Verifikasi MoU', 
+                'Menunggu Pembayaran', 
+                'Menunggu Konfirmasi Jadwal'
+            ])
+            ->orderBy('id_peminjaman', 'asc') // Antrean yang masuk duluan berada di atas
+            ->get();
 
-        // 2. Riwayat (Terbaru di atas)
+        // 2. Riwayat (Sudah selesai diproses / final)
+        // DITAMBAHKAN: 'dibatalkan' untuk merekam jadwal yang dibatalkan
         $riwayat_proses = \App\Models\Peminjaman::with(['user', 'fasilitas'])
-                            ->whereIn('status', ['disetujui', 'ditolak', 'diblokir'])
-                            // UBAH BARIS DI BAWAH INI: Ganti 'updated_at' menjadi 'id_peminjaman'
-                            ->orderBy('id_peminjaman', 'desc') 
-                            ->get();
+            ->whereIn('status', ['disetujui', 'ditolak', 'diblokir', 'dibatalkan'])
+            ->orderBy('id_peminjaman', 'desc') // Riwayat yang baru saja diproses berada di atas
+            ->get();
 
         return view('admin.antrean', compact('antrean_baru', 'riwayat_proses'));
     }
@@ -186,18 +201,31 @@ class AdminController extends Controller
     // 2. Memproses Perubahan Status (Terima / Tolak)
     public function updateStatus(Request $request, $id)
     {
-        $pinjam = \App\Models\Peminjaman::findOrFail($id);
-        
-        // Validasi input status
-        $request->validate([
-            'status' => 'required|in:disetujui,ditolak'
-        ]);
+    // 1. Validasi Cukup SEKALI Saja
+    $request->validate([
+        'status' => 'required|in:disetujui,ditolak,menunggu,diblokir,dibatalkan,Menunggu Verifikasi MoU,Menunggu Pembayaran,Menunggu Konfirmasi Jadwal'
+    ]);
 
-        $pinjam->status = $request->status;
-        $pinjam->save();
+    // 2. Ambil Data dan Update Cukup SEKALI
+    $peminjaman = \App\Models\Peminjaman::findOrFail($id);
+    $peminjaman->update([
+        'status' => $request->status
+    ]);
 
-        $pesan = $request->status == 'disetujui' ? 'Pengajuan berhasil disetujui!' : 'Pengajuan berhasil ditolak!';
-        return back()->with('success', $pesan);
+    // 3. Logika Pesan Notifikasi Dinamis
+    if ($request->status == 'disetujui') {
+        $pesan = 'Pengajuan berhasil disetujui!';
+    } elseif ($request->status == 'ditolak') {
+        $pesan = 'Pengajuan berhasil ditolak!';
+    } elseif ($request->status == 'Menunggu Pembayaran') {
+        $pesan = 'Tagihan berhasil diterbitkan! Menunggu pembayaran dari instansi.';
+    } elseif ($request->status == 'Menunggu Konfirmasi Jadwal') {
+        $pesan = 'Bukti bayar telah diterima. Silakan atur jadwal terkait.';
+    } else {
+        $pesan = 'Status pengajuan berhasil diperbarui menjadi: ' . $request->status;
+    }
+
+    return back()->with('success', $pesan);
     }
 
     // 3. Menampilkan Halaman Data Pengguna

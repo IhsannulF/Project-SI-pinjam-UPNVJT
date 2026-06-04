@@ -18,30 +18,26 @@ class EksternalController extends Controller
         return view('eksternal.reservasi', compact('fasilitas'));
     }
 
-    // 2. Memproses Pengajuan Eksternal (Wajib Upload)
+    // 2. Memproses Pengajuan Awal Eksternal (Hanya Upload MoU)
     public function storeReservasi(Request $request)
     {
-        // Validasi Ketat
+        // Validasi Ketat (Bukti bayar dihapus dari validasi awal)
         $request->validate([
             'id_fasilitas' => 'required|exists:fasilitas,id_fasilitas',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_berakhir' => 'required|date|after_or_equal:tanggal_mulai',
             'keperluan' => 'required|string',
             'dokumen_mou' => 'required|file|mimes:pdf|max:2048', // Wajib PDF, max 2MB
-            'bukti_bayar' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Wajib PDF/Gambar, max 2MB
         ]);
 
         // Proses Upload File MoU
         $fileMou = $request->file('dokumen_mou');
         $namaMou = time() . '_MoU_' . Auth::id() . '.' . $fileMou->getClientOriginalExtension();
+        
+        // Tetap menggunakan path lama Anda (public_path) agar tidak membingungkan
         $fileMou->move(public_path('uploads/mou'), $namaMou);
 
-        // Proses Upload Bukti Bayar
-        $fileBukti = $request->file('bukti_bayar');
-        $namaBukti = time() . '_Bukti_' . Auth::id() . '.' . $fileBukti->getClientOriginalExtension();
-        $fileBukti->move(public_path('uploads/bukti_bayar'), $namaBukti);
-
-        // Simpan ke Database dengan Status 'menunggu'
+        // Simpan ke Database dengan Status Baru
         Peminjaman::create([
             'id_user' => Auth::id(),
             'id_fasilitas' => $request->id_fasilitas,
@@ -49,11 +45,11 @@ class EksternalController extends Controller
             'tanggal_berakhir' => $request->tanggal_berakhir,
             'keperluan' => $request->keperluan,
             'dokumen_mou' => $namaMou,
-            'bukti_bayar' => $namaBukti,
-            'status' => 'menunggu' // Eksternal wajib menunggu validasi Admin
+            // bukti_bayar dibiarkan kosong
+            'status' => 'Menunggu Verifikasi MoU' // Status awal untuk alur baru
         ]);
 
-        return redirect()->back()->with('success', 'Pengajuan berhasil dikirim! Menunggu validasi Admin.');
+        return redirect()->route('eksternal.riwayat')->with('success', 'Pengajuan berhasil dikirim! Silakan tunggu verifikasi MoU oleh Admin.');
     }
 
    // 3. Menampilkan Dashboard Eksternal
@@ -62,7 +58,7 @@ class EksternalController extends Controller
         $userId = Auth::id();
         
         // Hitung Statistik
-        $stat_pending = Peminjaman::where('id_user', $userId)->whereIn('status', ['menunggu', 'pending'])->count();
+        $stat_pending = Peminjaman::where('id_user', $userId)->whereIn('status', ['menunggu', 'pending', 'Menunggu Verifikasi MoU', 'Menunggu Pembayaran', 'Menunggu Konfirmasi Jadwal'])->count();
         $stat_disetujui = Peminjaman::where('id_user', $userId)->where('status', 'disetujui')->count();
         $stat_ditolak = Peminjaman::where('id_user', $userId)->where('status', 'ditolak')->count();
         $dibatalkan = Peminjaman::where('id_user', $userId)->where('status', 'dibatalkan')->count();
@@ -97,7 +93,7 @@ class EksternalController extends Controller
         $peminjaman = Peminjaman::whereHas('fasilitas', function($q) {
                 $q->whereIn('kategori', ['GSG', 'Lapangan', 'Olahraga', 'Umum']);
             })
-            ->whereIn('status', ['disetujui', 'pending', 'menunggu', 'diblokir'])
+            ->whereIn('status', ['disetujui', 'pending', 'menunggu', 'diblokir', 'Menunggu Pembayaran', 'Menunggu Konfirmasi Jadwal'])
             ->get();
 
         // 3. Format struktur array SAMA PERSIS dengan format Mahasiswa (Looping per hari)
@@ -128,5 +124,44 @@ class EksternalController extends Controller
     public function informasi()
     {
         return view('eksternal.informasi');
+    }
+
+    // Fungsi untuk memproses upload bukti pembayaran eksternal
+    public function storePembayaran(Request $request)
+    {
+        // 1. Validasi File Bukti Transfer
+        $request->validate([
+            'id_peminjaman' => 'required|exists:peminjaman,id_peminjaman',
+            'bukti_bayar' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
+        ], [
+            'bukti_bayar.required' => 'Bukti pembayaran wajib diunggah.',
+            'bukti_bayar.mimes' => 'Format file harus berupa JPG, PNG, atau PDF.',
+            'bukti_bayar.max' => 'Ukuran file maksimal adalah 2MB.'
+        ]);
+
+        $peminjaman = \App\Models\Peminjaman::findOrFail($request->id_peminjaman);
+
+        // 2. Proses Upload Fisik File ke public/uploads/bukti_bayar
+        $fileBukti = $request->file('bukti_bayar');
+        $namaBukti = time() . '_Bukti_' . \Illuminate\Support\Facades\Auth::id() . '.' . $fileBukti->getClientOriginalExtension();
+        $fileBukti->move(public_path('uploads/bukti_bayar'), $namaBukti);
+
+        // 3. Update Kolom bukti_bayar dan Naikkan Status
+        $peminjaman->update([
+            'bukti_bayar' => $namaBukti,
+            'status' => 'Menunggu Konfirmasi Jadwal' // Status naik ke tahap verifikasi akhir admin
+        ]);
+
+        // 4. Kembali dengan pesan sukses
+        return redirect()->back()->with('success', 'Bukti pembayaran berhasil dikirim! Silakan menunggu konfirmasi akhir jadwal dari Admin.');
+    }
+
+
+    public function detailFasilitas()
+    {
+        // Ambil semua data fasilitas
+        $q_fasilitas = \App\Models\Fasilitas::all();
+        
+        return view('eksternal.detail_fasilitas', compact('q_fasilitas'));
     }
 }

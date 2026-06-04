@@ -28,23 +28,21 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $role = Auth::user()->role;
 
-            // PENGATURAN REDIRECT YANG BENAR
+            // PENGATURAN REDIRECT MENGGUNAKAN ROUTE NAME (Lebih Aman)
             if ($role === 'admin') {
-                return redirect('admin/dashboard');
-            } elseif ($role === 'umum') { 
-                // KUNCI UTAMA: Jika rolenya 'umum', lempar ke panel 'eksternal'
+                return redirect()->route('admin.dashboard');
+            } elseif ($role === 'umum' || $role === 'eksternal') { 
                 return redirect()->route('eksternal.dashboard'); 
             } elseif ($role === 'dosen' || $role === 'tendik') {
-                return redirect('dosen/dashboard'); 
-            } else {
-                return redirect('dashboard/' . $role);
+                return redirect()->route('dosen.dashboard'); 
+            } elseif ($role === 'mahasiswa') {
+                return redirect()->route('mahasiswa.dashboard'); // Pastikan route ini ada di web.php
             }
         }
 
         // Jika login gagal, kembalikan ke halaman login dengan pesan error
         return back()->with('error', 'Identitas atau password yang Anda masukkan salah!');
     }
-
     // --- FUNGSI REGISTER --- //
 
     public function showRegister()

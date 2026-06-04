@@ -1,69 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservasi Prioritas - Dosen SI-PINJAM</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/Logo-SI-Pinjam.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    
-    @vite('resources/css/app.css')
-    
-    <style>
-        /* Customisasi Flatpickr agar aksennya menjadi kuning/emas VIP */
-        .flatpickr-day.selected {
-            background: #eab308 !important; /* text-yellow-500 */
-            border-color: #eab308 !important;
-            color: #15181f !important;
-            font-weight: bold;
-        }
-        /* Menyembunyikan input asli, menampilkan input bentukan flatpickr */
-        input[type=date] { display: none; }
-    </style>
-</head>
-<body class="bg-sipbg text-white font-sans antialiased overflow-hidden selection:bg-yellow-500 selection:text-sipdark relative">
+@extends('layouts.dosen')
 
+@section('content')
     <div class="flex h-screen w-full">
 
-        <nav class="w-72 bg-sipdark border-r border-sipborder flex flex-col shrink-0 transition-all duration-300">
-            <div class="p-8 border-b border-sipborder">
-                <h3 class="text-2xl font-bold tracking-wide mb-1">SI-PINJAM</h3>
-                <p class="text-xs font-bold text-sipblue uppercase tracking-widest">Panel Dosen & Tendik</p>
-            </div>
-
-            <ul class="flex-1 py-6 px-4 space-y-2 overflow-y-auto [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder">
-                <li>
-                    <a href="{{ route('dosen.dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-home text-lg group-hover:text-sipblue transition-colors"></i> Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('dosen.fasilitas') ?? url('dosen/fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-search text-lg group-hover:text-sipblue transition-colors"></i> Cari Fasilitas
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('dosen.reservasi') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-yellow-500/10 text-yellow-500 font-semibold border border-yellow-500/20 transition-all">
-                        <i class="fas fa-bolt text-lg"></i> Reservasi Prioritas
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('dosen.riwayat') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-history text-lg group-hover:text-sipblue transition-colors"></i> Riwayat Pengajuan
-                    </a>
-                </li>
-            </ul>
-
-            <div class="p-4 border-t border-sipborder">
-                <a href="{{ url('logout') }}" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-sipred/50 text-sipred bg-sipred/5 hover:bg-sipred hover:text-white font-semibold transition-all shadow-[0_0_15px_rgba(222,40,40,0.1)]">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
-                </a>
-            </div>
-        </nav>
+        
 
         <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-sipbg to-[#15181f]">
             
@@ -74,7 +14,7 @@
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-8">
+            <div class="flex-1 p-8">
                 
                 <div class="max-w-3xl mx-auto">
                     
@@ -216,5 +156,4 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="{{ asset('assets/js/dosen-reservasi.js') }}"></script>
-</body>
-</html>
+@endsection

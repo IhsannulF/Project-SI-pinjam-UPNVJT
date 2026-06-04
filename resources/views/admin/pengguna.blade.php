@@ -1,59 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Pengguna - Admin SI-PINJAM</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/Logo-SI-Pinjam.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    @vite('resources/css/app.css')
-</head>
-<body class="bg-sipbg text-white font-sans antialiased overflow-hidden selection:bg-sipblue selection:text-white">
+@extends('layouts.admin')
 
+@section('content')
     <div class="flex h-screen w-full">
-
-        <nav class="w-72 bg-sipdark border-r border-sipborder flex flex-col shrink-0 transition-all duration-300">
-            <div class="p-8 border-b border-sipborder">
-                <h3 class="text-2xl font-bold tracking-wide mb-1">SI-PINJAM</h3>
-                <p class="text-xs font-bold text-sipblue uppercase tracking-widest">Panel Administrator</p>
-            </div>
-
-            <ul class="flex-1 py-6 px-4 space-y-2 overflow-y-auto [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder">
-                <li>
-                    <a href="{{ url('admin/dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-home text-lg group-hover:text-sipblue transition-colors"></i> Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('admin/fasilitas') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-building text-lg group-hover:text-sipblue transition-colors"></i> Kelola Fasilitas
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.antrean') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-clipboard-list text-lg group-hover:text-sipblue transition-colors"></i> Antrean Pinjaman
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-sipblue/10 text-sipblue font-semibold border border-sipblue/20 transition-all">
-                        <i class="fas fa-users text-lg"></i> Data Pengguna
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('home') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl text-siptext hover:bg-sipborder/50 hover:text-white font-medium transition-all group">
-                        <i class="fas fa-external-link-alt text-lg group-hover:text-sipblue transition-colors"></i> Lihat Situs
-                    </a>
-                </li>
-            </ul>
-
-            <div class="p-4 border-t border-sipborder">
-                <a href="{{ url('logout') }}" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-sipred/50 text-sipred bg-sipred/5 hover:bg-sipred hover:text-white font-semibold transition-all shadow-[0_0_15px_rgba(222,40,40,0.1)]">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
-                </a>
-            </div>
-        </nav>
 
         <!-- KONTEN UTAMA -->
         <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-sipbg to-[#15181f]">
@@ -208,10 +156,4 @@
     </div>
 
     <script src="{{ asset('assets/js/admin-pengguna.js') }}"></script>
-
-</body>
-</html>
-    </div>
-
-</body>
-</html>
+@endsection

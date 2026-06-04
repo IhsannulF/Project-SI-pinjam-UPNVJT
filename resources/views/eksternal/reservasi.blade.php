@@ -80,17 +80,13 @@
                 <textarea name="keperluan" rows="3" required placeholder="Contoh: Turnamen Futsal Antar Instansi Kota Sidoarjo..." class="w-full bg-[#1a1d24] border border-gray-700 rounded-xl px-5 py-4 text-white text-sm focus:outline-none focus:border-sipblue"></textarea>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-700/50 mt-6">
+            <div class="pt-4 border-t border-gray-700/50 mt-6">
                 <div class="bg-[#1a1d24] p-5 rounded-2xl border border-gray-700 border-dashed hover:border-sipblue transition-colors">
-                    <label class="block text-sm font-bold text-white mb-1"><i class="fas fa-file-pdf text-sipred mr-2"></i> Surat MoU / Perizinan</label>
+                    <label class="block text-sm font-bold text-white mb-1">
+                        <i class="fas fa-file-pdf text-sipred mr-2"></i> Surat MoU / Perizinan
+                    </label>
                     <p class="text-xs text-gray-400 mb-4">Wajib berformat PDF. Maksimal 2MB.</p>
                     <input type="file" name="dokumen_mou" accept=".pdf" required class="block w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-sipblue/10 file:text-sipblue hover:file:bg-sipblue hover:file:text-white transition-all cursor-pointer">
-                </div>
-
-                <div class="bg-[#1a1d24] p-5 rounded-2xl border border-gray-700 border-dashed hover:border-[#00AE1C] transition-colors">
-                    <label class="block text-sm font-bold text-white mb-1"><i class="fas fa-receipt text-[#00AE1C] mr-2"></i> Bukti Pembayaran</label>
-                    <p class="text-xs text-gray-400 mb-4">Format PDF, JPG, atau PNG. Maksimal 2MB.</p>
-                    <input type="file" name="bukti_bayar" accept=".pdf,image/*" required class="block w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#00AE1C]/10 file:text-[#00AE1C] hover:file:bg-[#00AE1C] hover:file:text-white transition-all cursor-pointer">
                 </div>
             </div>
 

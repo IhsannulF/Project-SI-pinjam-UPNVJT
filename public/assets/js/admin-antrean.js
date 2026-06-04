@@ -141,3 +141,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Menampilkan pop-up review tagihan
+function bukaModalTagihan(btnElement) {
+    const url = btnElement.getAttribute('data-url');
+    const nama = btnElement.getAttribute('data-nama');
+    const fasilitas = btnElement.getAttribute('data-fasilitas');
+    const lamaHari = btnElement.getAttribute('data-lama');
+    const hargaPerHari = btnElement.getAttribute('data-harga');
+    const totalBiaya = btnElement.getAttribute('data-total');
+
+    const formatRupiah = (angka) => {
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(parseInt(angka));
+    };
+
+    // Mengisi data ke tulisan di modal
+    document.getElementById('tagihan_nama').innerText = nama;
+    document.getElementById('tagihan_fasilitas').innerText = fasilitas;
+    document.getElementById('tagihan_lama').innerText = lamaHari + ' Hari';
+    document.getElementById('tagihan_harga').innerText = formatRupiah(hargaPerHari);
+    document.getElementById('tagihan_total').innerText = formatRupiah(totalBiaya);
+    
+    // Set URL tujuan form secara dinamis
+    document.getElementById('formTerbitkanTagihan').action = url;
+
+    const modal = document.getElementById('modalTagihan');
+    const modalContent = document.getElementById('modalTagihanContent');
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    
+    setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+    }, 10);
+}
+
+// Menutup pop-up tagihan
+function tutupModalTagihan() {
+    const modal = document.getElementById('modalTagihan');
+    const modalContent = document.getElementById('modalTagihanContent');
+    
+    modalContent.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }, 300);
+}

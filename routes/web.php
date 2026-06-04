@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dosen/reservasi', [App\Http\Controllers\DosenController::class, 'createReservasi'])->name('dosen.reservasi');
     Route::post('/dosen/reservasi', [App\Http\Controllers\DosenController::class, 'storeReservasi'])->name('dosen.reservasi.store');
     Route::get('/dosen/riwayat', [App\Http\Controllers\DosenController::class, 'riwayat'])->name('dosen.riwayat');
+    Route::get('/dosen/dashboard', [App\Http\Controllers\DosenController::class, 'dashboard'])->name('dosen.dashboard');
 
 
     // --- AREA MAHASISWA ---
@@ -101,9 +102,13 @@ Route::middleware(['auth'])->group(function () {
     
     // Rute Riwayat
     Route::get('/eksternal/riwayat', [App\Http\Controllers\EksternalController::class, 'riwayat'])->name('eksternal.riwayat');
+    Route::post('/eksternal/pembayaran', [App\Http\Controllers\EksternalController::class, 'storePembayaran'])->name('eksternal.pembayaran.store');
 
     Route::get('/eksternal/cari-fasilitas', [App\Http\Controllers\EksternalController::class, 'cariFasilitas'])->name('eksternal.cari_fasilitas');
 
+    Route::get('/eksternal/detail-fasilitas', [App\Http\Controllers\EksternalController::class, 'detailFasilitas'])->name('eksternal.detail_fasilitas');
     // Rute Informasi & Template MoU
     Route::get('/eksternal/informasi', [App\Http\Controllers\EksternalController::class, 'informasi'])->name('eksternal.informasi');
+
+    Route::get('/eksternal/fasilitas/{id}', [App\Http\Controllers\EksternalController::class, 'detailFasilitas'])->name('eksternal.detail_fasilitas');
 });
