@@ -24,7 +24,7 @@ window.konfirmasiHapus = function(button) {
     });
 };
 
-// 2. Buka Modal Edit Fasilitas
+// 2. Buka Modal Edit Fasilitas (Perbaikan)
 window.bukaModalEdit = function(id, nama, kategori, kapasitas, ikon) {
     Swal.fire({
         title: 'Edit Fasilitas',
@@ -38,23 +38,28 @@ window.bukaModalEdit = function(id, nama, kategori, kapasitas, ikon) {
                 
                 <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Nama Fasilitas</label>
-                    <input type="text" name="nama" value="${nama}" class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                    <input type="text" name="nama" value="${nama}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Kategori</label>
-                        <select name="kategori" class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
-                            <option value="gsg" ${kategori == 'gsg' ? 'selected' : ''}>GSG</option>
-                            <option value="lab" ${kategori == 'lab' ? 'selected' : ''}>Lab</option>
-                            <option value="kelas" ${kategori == 'kelas' ? 'selected' : ''}>Kelas</option>
-                            <option value="rapat" ${kategori == 'rapat' ? 'selected' : ''}>Ruang Rapat</option>
+                        <select name="kategori" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                            <option value="gsg" ${kategori.toLowerCase() == 'gsg' ? 'selected' : ''}>GSG</option>
+                            <option value="lab" ${kategori.toLowerCase() == 'lab' ? 'selected' : ''}>Lab</option>
+                            <option value="kelas" ${kategori.toLowerCase() == 'kelas' ? 'selected' : ''}>Kelas</option>
+                            <option value="rapat" ${kategori.toLowerCase() == 'rapat' ? 'selected' : ''}>Ruang Rapat</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Kapasitas</label>
-                        <input type="number" name="kapasitas" value="${kapasitas}" class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                        <input type="number" name="kapasitas" value="${kapasitas}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ikon (FontAwesome)</label>
+                    <input type="text" name="ikon" value="${ikon}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
                 </div>
 
                 <div>
@@ -75,7 +80,10 @@ window.bukaModalEdit = function(id, nama, kategori, kapasitas, ikon) {
             cancelButton: 'rounded-xl font-bold px-6 py-2.5',
             popup: 'rounded-3xl border border-gray-700'
         },
-        preConfirm: () => document.getElementById('formEdit').submit()
+        preConfirm: () => {
+            // Memaksa submit form HTML yang ada di dalam SweetAlert
+            document.getElementById('formEdit').submit();
+        }
     });
 };
 

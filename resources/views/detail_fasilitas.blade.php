@@ -73,12 +73,33 @@
                     </p>
                 </div>
 
+                @php
+                    $target_url = route('login'); // Default url kalau belum login
+                    
+                    if (Auth::check()) {
+                        $role = strtolower(Auth::user()->role ?? '');
+                        
+                        if ($role === 'admin') {
+                            $target_url = route('admin.dashboard');
+                        } elseif ($role === 'mahasiswa') {
+                            $target_url = route('mahasiswa.dashboard');
+                            // Catatan: Kalau mau langsung ke form pinjam, ganti jadi route('mahasiswa.pinjam.form')
+                        } elseif ($role === 'dosen' || $role === 'tendik') {
+                            $target_url = route('dosen.dashboard');
+                        } elseif ($role === 'umum' || $role === 'eksternal') {
+                            $target_url = route('eksternal.dashboard');
+                        } else {
+                            $target_url = url('/dashboard'); // Fallback aman
+                        }
+                    }
+                @endphp
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <a href="#" class="w-full bg-sipdark border border-sipborder hover:border-sipblue hover:text-sipblue text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2">
                         <i class="far fa-calendar-alt"></i> Lihat Jadwal
                     </a>
                     
-                    <a href="{{ route('login') }}" class="w-full bg-sipblue hover:bg-sipbluehover text-white font-bold py-4 rounded-2xl shadow-lg shadow-sipblue/30 transition-all flex items-center justify-center gap-2">
+                    <a href="{{ $target_url }}" class="w-full bg-sipblue hover:bg-sipbluehover text-white font-bold py-4 rounded-2xl shadow-lg shadow-sipblue/30 transition-all flex items-center justify-center gap-2">
                         Pinjam Sekarang <i class="fas fa-arrow-right text-sm"></i>
                     </a>
                 </div>
