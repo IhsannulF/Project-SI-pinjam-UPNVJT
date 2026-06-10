@@ -5,10 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
     "use strict";
 
     const header = document.querySelector('.header-area');
+    // Jika Anda memakai header dengan class transparan bawaan, sesuaikan pemanggilan di bawah
+    // Namun untuk struktur landing page terbaru Anda, header sudah fixed di atas.
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('section, div[id="welcome"]'); 
 
-    // A. Efek Sticky Header (Tahan Header saat di-scroll)
+    // A. Efek Sticky Header (Opsional jika Anda ingin efek berubah saat di-scroll)
     if(header) {
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
@@ -58,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==========================================
 // 2. AREA VANILLA JS (Untuk Auto Scroll Carousel)
 // ==========================================
-// (Bagian ini tidak saya ubah, karena kode Anda sudah sempurna)
 window.addEventListener('load', function() {
     const carousel = document.getElementById('carouselFasilitas');
     
@@ -109,3 +110,43 @@ window.addEventListener('load', function() {
         jalankanAutoScroll();
     }
 });
+
+// ==========================================
+// 3. FUNGSI MENU MOBILE (Anti-Macet)
+// ==========================================
+// Menggunakan window. agar pasti bisa dibaca oleh atribut onclick di HTML
+
+window.toggleMobileMenu = function() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const ikonBtn = document.getElementById('ikonMobileMenu');
+    
+    if (mobileMenu.classList.contains('hidden')) {
+        // Buka menu
+        mobileMenu.classList.remove('hidden');
+        mobileMenu.classList.add('flex');
+        // Ubah ikon jadi X
+        if (ikonBtn) {
+            ikonBtn.classList.remove('fa-bars');
+            ikonBtn.classList.add('fa-times');
+        }
+    } else {
+        // Tutup menu
+        window.tutupMobileMenu();
+    }
+};
+
+window.tutupMobileMenu = function() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const ikonBtn = document.getElementById('ikonMobileMenu');
+    
+    if (mobileMenu) {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('flex');
+        
+        // Kembalikan ikon jadi garis tiga
+        if (ikonBtn) {
+            ikonBtn.classList.remove('fa-times');
+            ikonBtn.classList.add('fa-bars');
+        }
+    }
+};

@@ -1,30 +1,33 @@
 @extends('layouts.admin')
 
 @section('content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+
 @if(session('success'))
     <div class="bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/30 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
         <i class="fas fa-check-circle"></i> {{ session('success') }}
     </div>
 @endif
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
     
-    <div class="space-y-8">
+    <div class="space-y-6 lg:space-y-8">
         
-        <div class="bg-sipdark border border-sipborder rounded-3xl p-6 md:p-8 shadow-xl">
-            <h2 class="text-lg font-bold mb-6 flex items-center gap-3"><i class="fas fa-plus-circle text-sipblue text-xl"></i> Tambah Fasilitas</h2>
+        <div class="bg-sipdark border border-sipborder rounded-3xl p-5 md:p-8 shadow-xl">
+            <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3"><i class="fas fa-plus-circle text-sipblue text-lg md:text-xl"></i> Tambah Fasilitas</h2>
             
             <form id="formTambahFasilitas" method="POST" action="{{ route('admin.fasilitas.store') }}" enctype="multipart/form-data">
                 @csrf
-                <div class="space-y-5">
+                <div class="space-y-4 md:space-y-5">
                     <div>
-                        <label class="block text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Nama Fasilitas</label>
+                        <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Nama Fasilitas</label>
                         <input type="text" name="nama" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sipblue focus:ring-1 focus:ring-sipblue transition-all text-sm">
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Kategori</label>
+                            <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Kategori</label>
                             <select name="kategori" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:border-sipblue transition-all text-sm">
                                 <option value="gsg">GSG</option>
                                 <option value="lab">Lab</option>
@@ -33,13 +36,13 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Kapasitas</label>
+                            <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Kapasitas</label>
                             <input type="number" name="kapasitas" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sipblue transition-all text-sm">
                         </div>
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Pilih Ikon</label>
+                        <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Pilih Ikon</label>
                         <select name="ikon" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm">
                             <option value="fas fa-building">🏢 Gedung Umum</option>
                             <option value="fas fa-laptop-code">💻 Lab Komputer</option>
@@ -49,42 +52,42 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Foto Ruangan</label>
+                        <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Foto Ruangan</label>
                         <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-sipblue/10 file:text-sipblue hover:file:bg-sipblue/20 cursor-pointer">
                     </div>
                     
-                    <button type="submit" class="w-full bg-sipblue hover:bg-sipbluehover text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-sipblue/30 active:scale-95">
+                    <button type="submit" class="w-full bg-sipblue hover:bg-sipbluehover text-white font-bold py-3 md:py-3.5 rounded-xl transition-all shadow-lg shadow-sipblue/30 active:scale-95 text-sm md:text-base">
                         Simpan Fasilitas
                     </button>
                 </div>
             </form>
         </div>
 
-        <div class="bg-sipdark border border-sipborder rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+        <div class="bg-sipdark border border-sipborder rounded-3xl p-5 md:p-8 shadow-xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-1 h-full bg-sipred"></div>
-            <h2 class="text-lg font-bold mb-6 flex items-center gap-3">
-                <i class="fas fa-calendar-times text-sipred text-xl"></i> Tutup/Blokir Jadwal
+            <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3">
+                <i class="fas fa-calendar-times text-sipred text-lg md:text-xl"></i> Tutup/Blokir Jadwal
             </h2>
             
             <form id="formBlokirJadwal" method="POST" action="{{ route('admin.block') }}">
                 @csrf
-                <div class="space-y-5">
+                <div class="space-y-4 md:space-y-5">
                     
                     <div>
-                        <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Pilih Fasilitas <span class="text-sipred">*</span></label>
+                        <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Pilih Fasilitas <span class="text-sipred">*</span></label>
                         <input type="hidden" name="id_fasilitas_blokir" id="input_id_fasilitas_blokir">
-                        <button type="button" onclick="bukaModalFasilitasBlokir()" id="btnPilihFasilitasBlokir" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-4 text-left text-sm text-gray-400 hover:border-sipred focus:outline-none transition-all flex justify-between items-center group shadow-inner">
-                            <span id="textFasilitasTerpilihBlokir" class="flex items-center">
-                                <i class="fas fa-building mr-3 text-gray-500 text-lg"></i> 
-                                <span>-- Klik untuk Cari & Pilih Fasilitas --</span>
+                        <button type="button" onclick="bukaModalFasilitasBlokir()" id="btnPilihFasilitasBlokir" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 md:py-4 text-left text-xs md:text-sm text-gray-400 hover:border-sipred focus:outline-none transition-all flex justify-between items-center group shadow-inner">
+                            <span id="textFasilitasTerpilihBlokir" class="flex items-center truncate pr-2">
+                                <i class="fas fa-building mr-2 md:mr-3 text-gray-500 text-base md:text-lg shrink-0"></i> 
+                                <span class="truncate">-- Klik untuk Cari & Pilih --</span>
                             </span>
-                            <i class="fas fa-search text-sipred group-hover:scale-110 transition-transform"></i>
+                            <i class="fas fa-search text-sipred group-hover:scale-110 transition-transform shrink-0"></i>
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Mulai</label>
+                            <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Mulai</label>
                             <div class="relative">
                                 <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
                                 <input type="text" name="tanggal_mulai" required placeholder="Pilih Tanggal" class="datepicker-custom w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all cursor-pointer">
@@ -92,7 +95,7 @@
                         </div>
                         
                         <div>
-                            <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Berakhir</label>
+                            <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Berakhir</label>
                             <div class="relative">
                                 <i class="far fa-calendar-alt absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
                                 <input type="text" name="tanggal_berakhir" required placeholder="Pilih Tanggal" class="datepicker-custom w-full bg-sipbg border border-sipborder rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all cursor-pointer">
@@ -101,11 +104,11 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Alasan Blokir</label>
-                        <input type="text" name="keperluan" required placeholder="Contoh: Renovasi Lab, Libur Lebaran" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipred placeholder-gray-600">
+                        <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-widest mb-2">Alasan Blokir</label>
+                        <input type="text" name="keperluan" required placeholder="Contoh: Renovasi Lab, Libur" class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sipred placeholder-gray-600">
                     </div>
 
-                    <button type="submit" id="btnSubmitBlokir" class="w-full bg-sipred hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-sipred/30 active:scale-95 flex justify-center items-center gap-2">
+                    <button type="submit" id="btnSubmitBlokir" class="w-full bg-sipred hover:bg-red-700 text-white font-bold py-3 md:py-3.5 rounded-xl transition-all shadow-lg shadow-sipred/30 active:scale-95 flex justify-center items-center gap-2 text-sm md:text-base">
                         <i class="fas fa-ban"></i> Eksekusi Blokir
                     </button>
                 </div>
@@ -114,33 +117,33 @@
 
     </div>
 
-    <div class="lg:col-span-2 space-y-8">
+    <div class="lg:col-span-2 space-y-6 lg:space-y-8">
         
-        <div class="bg-sipdark border border-sipborder rounded-3xl p-6 md:p-8 shadow-xl flex flex-col h-[700px]">
-            <h2 class="text-lg font-bold mb-6 flex items-center gap-3"><i class="fas fa-list text-sipblue text-xl"></i> Daftar Fasilitas</h2>
+        <div class="bg-sipdark border border-sipborder rounded-3xl p-5 md:p-8 shadow-xl flex flex-col h-[400px] md:h-[700px]">
+            <h2 class="text-base md:text-lg font-bold mb-4 md:mb-6 flex items-center gap-3"><i class="fas fa-list text-sipblue text-lg md:text-xl"></i> Daftar Fasilitas</h2>
 
-            <div class="flex flex-wrap gap-2 mb-6 border-b border-sipborder pb-6">
-                <button class="filter-btn bg-sipblue text-white border border-sipblue px-5 py-2 rounded-full text-xs font-bold transition-all" data-filter="semua">Semua</button>
-                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-5 py-2 rounded-full text-xs font-bold transition-all" data-filter="gsg">GSG</button>
-                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-5 py-2 rounded-full text-xs font-bold transition-all" data-filter="lab">Lab</button>
-                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-5 py-2 rounded-full text-xs font-bold transition-all" data-filter="kelas">Kelas</button>
-                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-5 py-2 rounded-full text-xs font-bold transition-all" data-filter="rapat">Rapat</button>
+            <div class="flex flex-wrap gap-2 mb-4 md:mb-6 border-b border-sipborder pb-4 md:pb-6">
+                <button class="filter-btn bg-sipblue text-white border border-sipblue px-4 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all" data-filter="semua">Semua</button>
+                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-4 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all" data-filter="gsg">GSG</button>
+                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-4 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all" data-filter="lab">Lab</button>
+                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-4 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all" data-filter="kelas">Kelas</button>
+                <button class="filter-btn bg-sipbg text-siptext border border-sipborder hover:text-white px-4 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all" data-filter="rapat">Rapat</button>
             </div>
 
-            <div class="flex-1 overflow-y-auto pr-3 space-y-3 [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder">
+            <div class="flex-1 overflow-y-auto pr-2 md:pr-3 space-y-3 [&::-webkit-scrollbar]:w-[4px] md:[&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder hover:[&::-webkit-scrollbar-thumb]:bg-gray-500 [&::-webkit-scrollbar-thumb]:rounded-full">
                 @forelse($q_fasilitas as $row)
-                <div class="fasilitas-item flex items-center justify-between p-4 bg-sipbg border border-sipborder rounded-2xl group transition-all hover:border-sipblue/50" data-kategori="{{ $row->kategori }}">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-xl bg-sipdark border border-sipborder flex items-center justify-center text-sipblue group-hover:bg-sipblue/10 group-hover:scale-110 transition-all">
-                            <i class="{{ $row->ikon }} text-2xl"></i>
+                <div class="fasilitas-item flex items-center justify-between p-3 md:p-4 bg-sipbg border border-sipborder rounded-2xl group transition-all hover:border-sipblue/50" data-kategori="{{ $row->kategori }}">
+                    <div class="flex items-center gap-3 md:gap-4 truncate pr-2">
+                        <div class="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-sipdark border border-sipborder flex items-center justify-center text-sipblue group-hover:bg-sipblue/10 group-hover:scale-110 transition-all shrink-0">
+                            <i class="{{ $row->ikon }} text-lg md:text-2xl"></i>
                         </div>
-                        <div>
-                            <div class="font-bold text-sm text-white">{{ $row->nama_fasilitas }}</div>
-                            <div class="text-xs text-siptext"><i class="fas fa-users mr-1"></i> {{ $row->kapasitas }} Orang</div>
+                        <div class="truncate">
+                            <div class="font-bold text-xs md:text-sm text-white truncate">{{ $row->nama_fasilitas }}</div>
+                            <div class="text-[10px] md:text-xs text-siptext"><i class="fas fa-users mr-1"></i> {{ $row->kapasitas }} Orang</div>
                         </div>
                     </div>
                     
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1 md:gap-2 shrink-0">
                         <button type="button" onclick="bukaModalEdit('{{ $row->id_fasilitas }}', '{{ addslashes($row->nama_fasilitas) }}', '{{ $row->kategori }}', '{{ $row->kapasitas }}', '{{ $row->ikon }}')" class="text-sipblue p-2 hover:scale-110 transition-transform"><i class="fas fa-edit"></i></button>
                         
                         <form method="POST" action="{{ route('admin.fasilitas.delete') }}" class="inline">
@@ -152,24 +155,24 @@
                 </div>
                 @empty
                 <div class="text-center py-12 text-siptext">
-                    <i class="fas fa-box-open text-4xl mb-4 opacity-50"></i>
-                    <p>Belum ada data fasilitas.</p>
+                    <i class="fas fa-box-open text-3xl md:text-4xl mb-4 opacity-50"></i>
+                    <p class="text-sm md:text-base">Belum ada data fasilitas.</p>
                 </div>
                 @endforelse
             </div>
         </div>
 
-        <div class="bg-sipdark border border-sipborder rounded-3xl p-6 md:p-8 shadow-xl">
-            <h2 class="text-lg font-bold mb-6 flex items-center gap-3">
-                <i class="fas fa-calendar-minus text-siptext text-xl"></i> Fasilitas Yang Diblokir
+        <div class="bg-sipdark border border-sipborder rounded-3xl p-5 md:p-8 shadow-xl">
+            <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3">
+                <i class="fas fa-calendar-minus text-siptext text-lg md:text-xl"></i> Fasilitas Yang Diblokir
             </h2>
             
-            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-5 md:mb-6">
                 <div class="flex-1 relative">
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-siptext"></i>
-                    <input type="text" id="searchBlokir" placeholder="Cari nama fasilitas..." class="w-full bg-sipbg border border-sipborder rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-sipblue transition-all">
+                    <input type="text" id="searchBlokir" placeholder="Cari nama fasilitas..." class="w-full bg-sipbg border border-sipborder rounded-xl pl-10 pr-4 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-sipblue transition-all">
                 </div>
-                <select id="filterKategoriBlokir" class="bg-sipbg border border-sipborder rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-sipblue transition-all">
+                <select id="filterKategoriBlokir" class="bg-sipbg border border-sipborder rounded-xl px-4 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-sipblue transition-all">
                     <option value="semua">Semua Kategori</option>
                     <option value="gsg">GSG</option>
                     <option value="lab">Lab</option>
@@ -178,13 +181,13 @@
                 </select>
             </div>
 
-            <div class="overflow-y-auto overflow-x-auto max-h-[400px] pr-2 [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder [&::-webkit-scrollbar-thumb]:rounded-full">
-                <table class="w-full text-left border-collapse relative">
+            <div class="overflow-y-auto overflow-x-auto max-h-[400px] pr-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
+                <table class="w-full text-left border-collapse relative min-w-[500px]">
                     <thead class="sticky top-0 bg-sipdark z-20">
-                        <tr class="text-siptext text-xs uppercase font-bold tracking-wider">
-                            <th class="py-4 px-4 border-b border-sipborder shadow-sm">Fasilitas</th>
-                            <th class="py-4 px-4 border-b border-sipborder shadow-sm">Keterangan Blokir</th>
-                            <th class="py-4 px-4 border-b border-sipborder shadow-sm text-right">Aksi</th>
+                        <tr class="text-siptext text-[10px] md:text-xs uppercase font-bold tracking-wider whitespace-nowrap">
+                            <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm">Fasilitas</th>
+                            <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm">Keterangan Blokir</th>
+                            <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="tableBlokirBody">
@@ -207,33 +210,33 @@
                                 ];
                             })->sortBy('tanggal')->values()->toArray();
                         @endphp
-                        <tr class="blokir-row border-b border-sipborder/50 hover:bg-sipbg/50 transition-colors" 
+                        <tr class="blokir-row border-b border-sipborder/50 hover:bg-sipbg/50 transition-colors whitespace-nowrap" 
                             data-nama="{{ strtolower($first->fasilitas->nama_fasilitas) }}" 
                             data-kategori="{{ strtolower($first->fasilitas->kategori) }}">
                             
-                            <td class="py-4 px-4 text-white flex items-center gap-3 whitespace-nowrap">
-                                <div class="w-10 h-10 rounded-lg bg-sipred/10 text-sipred flex items-center justify-center">
-                                    <i class="fas fa-lock"></i>
+                            <td class="py-3 md:py-4 px-4 text-white flex items-center gap-3">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-sipred/10 text-sipred flex items-center justify-center shrink-0">
+                                    <i class="fas fa-lock text-sm md:text-base"></i>
                                 </div>
-                                <div>
-                                    <div class="font-bold text-sm">{{ $first->fasilitas->nama_fasilitas }}</div>
-                                    <div class="text-[10px] font-bold text-sipred mt-0.5">{{ $total_hari }} Hari Diblokir</div>
+                                <div class="truncate max-w-[150px] md:max-w-[200px]">
+                                    <div class="font-bold text-xs md:text-sm truncate" title="{{ $first->fasilitas->nama_fasilitas }}">{{ $first->fasilitas->nama_fasilitas }}</div>
+                                    <div class="text-[9px] md:text-[10px] font-bold text-sipred mt-0.5">{{ $total_hari }} Hari Diblokir</div>
                                 </div>
                             </td>
-                            <td class="py-4 px-4 text-sm text-siptext italic">"{{ $display_reason }}"</td>
-                            <td class="py-4 px-4 text-right">
+                            <td class="py-3 md:py-4 px-4 text-xs md:text-sm text-siptext italic truncate max-w-[150px]" title="{{ $display_reason }}">"{{ $display_reason }}"</td>
+                            <td class="py-3 md:py-4 px-4 text-right">
                                 <button type="button" 
                                         data-dates="{{ json_encode($blocked_data) }}"
                                         onclick="bukaModalEditRentang('{{ $id_fasilitas }}', '{{ addslashes($first->fasilitas->nama_fasilitas) }}', this)" 
-                                        class="inline-flex items-center gap-2 text-sipblue bg-sipblue/10 hover:bg-sipblue hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+                                        class="inline-flex items-center gap-1.5 md:gap-2 text-sipblue bg-sipblue/10 hover:bg-sipblue hover:text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold transition-all">
                                     <i class="fas fa-edit"></i> Atur Jadwal
                                 </button>
                             </td>
                         </tr>
                         @empty
                         <tr id="emptyBlokirRow">
-                            <td colspan="3" class="py-8 text-center text-siptext text-sm">
-                                <i class="fas fa-check-circle text-2xl mb-2 opacity-50 block text-[#00AE1C]"></i> Tidak ada fasilitas yang sedang diblokir.
+                            <td colspan="3" class="py-8 text-center text-siptext text-xs md:text-sm">
+                                <i class="fas fa-check-circle text-xl md:text-2xl mb-2 opacity-50 block text-[#00AE1C]"></i> Tidak ada fasilitas yang sedang diblokir.
                             </td>
                         </tr>
                         @endforelse
@@ -255,48 +258,48 @@
 <div id="modalFasilitasBlokir" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="tutupModalFasilitasBlokir()"></div>
     
-    <div id="modalBoxFasilitasBlokir" class="bg-[#1a1d24] border border-sipborder rounded-3xl w-full max-w-2xl max-h-[85vh] relative z-10 flex flex-col shadow-2xl scale-95 opacity-0 transition-all duration-300 overflow-hidden">
+    <div id="modalBoxFasilitasBlokir" class="bg-[#1a1d24] border border-sipborder rounded-2xl md:rounded-3xl w-full max-w-2xl max-h-[85vh] md:max-h-[80vh] relative z-10 flex flex-col shadow-2xl scale-95 opacity-0 transition-all duration-300 overflow-hidden">
         
-        <div class="p-6 border-b border-sipborder flex justify-between items-center bg-[#15181f]">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <div class="p-4 md:p-6 border-b border-sipborder flex justify-between items-center bg-[#15181f]">
+            <h3 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
                 <i class="fas fa-list-ul text-sipred"></i> Katalog Fasilitas
             </h3>
             <button type="button" onclick="tutupModalFasilitasBlokir()" class="text-gray-400 hover:text-sipred transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sipred/10">
-                <i class="fas fa-times text-xl"></i>
+                <i class="fas fa-times text-lg md:text-xl"></i>
             </button>
         </div>
 
         <div class="p-4 border-b border-sipborder bg-[#1a1d24]">
             <div class="relative">
                 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchFasilitasBlokir" placeholder="Ketik nama fasilitas yang ingin diblokir..." class="w-full bg-[#0f1115] border border-gray-700 rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all placeholder-gray-600">
+                <input type="text" id="searchFasilitasBlokir" placeholder="Ketik nama fasilitas..." class="w-full bg-[#0f1115] border border-gray-700 rounded-xl pl-11 pr-4 py-2.5 md:py-3 text-white text-sm focus:outline-none focus:border-sipred transition-all placeholder-gray-600">
             </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-5 space-y-6 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div class="flex-1 overflow-y-auto p-4 md:p-5 space-y-5 md:space-y-6 [&::-webkit-scrollbar]:w-[4px] md:[&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
             
             @foreach($q_fasilitas->groupBy('kategori') as $kategori => $items)
                 <div class="kategori-group-blokir">
-                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 pl-1 flex items-center gap-2">
+                    <h4 class="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 pl-1 flex items-center gap-2">
                         <i class="fas fa-tags text-siptext"></i> {{ $kategori ?: 'Lainnya' }}
                     </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                         @foreach($items as $f)
-                            <button type="button" onclick="pilihFasilitasBlokir('{{ $f->id_fasilitas }}', '{{ $f->nama_fasilitas }}')" class="fasilitas-item-blokir text-left bg-[#15181f] border border-gray-700 hover:border-sipred hover:bg-sipred/10 rounded-xl p-4 transition-all group relative overflow-hidden">
+                            <button type="button" onclick="pilihFasilitasBlokir('{{ $f->id_fasilitas }}', '{{ $f->nama_fasilitas }}')" class="fasilitas-item-blokir text-left bg-[#15181f] border border-gray-700 hover:border-sipred hover:bg-sipred/10 rounded-xl p-3 md:p-4 transition-all group relative overflow-hidden">
                                 <div class="absolute right-0 top-0 w-1 h-full bg-sipred opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <div class="font-bold text-white text-sm group-hover:text-sipred transition-colors fasilitas-name-blokir">{{ $f->nama_fasilitas }}</div>
+                                <div class="font-bold text-white text-xs md:text-sm group-hover:text-sipred transition-colors fasilitas-name-blokir truncate">{{ $f->nama_fasilitas }}</div>
                             </button>
                         @endforeach
                     </div>
                 </div>
             @endforeach
 
-            <div id="noResultFasilitasBlokir" class="hidden text-center py-10 flex flex-col items-center justify-center">
-                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 mx-auto">
-                    <i class="fas fa-search text-2xl text-gray-500"></i>
+            <div id="noResultFasilitasBlokir" class="hidden text-center py-8 flex-col items-center justify-center">
+                <div class="w-12 h-12 md:w-16 md:h-16 bg-gray-800 rounded-full flex items-center justify-center mb-3 md:mb-4 mx-auto">
+                    <i class="fas fa-search text-xl md:text-2xl text-gray-500"></i>
                 </div>
-                <h4 class="text-white font-bold mb-1">Fasilitas tidak ditemukan</h4>
-                <p class="text-xs text-gray-400">Coba gunakan kata kunci pencarian yang lain.</p>
+                <h4 class="text-white font-bold text-sm md:text-base mb-1">Fasilitas tidak ditemukan</h4>
+                <p class="text-[10px] md:text-xs text-gray-400">Coba gunakan kata kunci pencarian yang lain.</p>
             </div>
         </div>
     </div>
@@ -313,6 +316,8 @@
     `;
 </script>
 
-<script src="{{ asset('assets/js/admin_fasilitas.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+<script src="{{ asset('assets/js/admin_fasilitas.js') }}?v={{ time() }}"></script>
 
 @endsection
