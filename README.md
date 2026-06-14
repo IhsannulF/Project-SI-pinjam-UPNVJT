@@ -87,10 +87,10 @@ Copy file .env.example dan ubah namanya menjadi .env.
 Buka file .env dan sesuaikan koneksi database Anda:
 
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=sipinjam_db
-DB_USERNAME=root
+DB_HOST=
+DB_PORT=
+DB_DATABASE=
+DB_USERNAME=
 DB_PASSWORD=
 
 Generate application key:
