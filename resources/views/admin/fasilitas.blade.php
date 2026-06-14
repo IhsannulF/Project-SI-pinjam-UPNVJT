@@ -15,14 +15,16 @@
     <div class="space-y-6 lg:space-y-8">
         
         <div class="bg-sipdark border border-sipborder rounded-3xl p-5 md:p-8 shadow-xl">
-            <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3"><i class="fas fa-plus-circle text-sipblue text-lg md:text-xl"></i> Tambah Fasilitas</h2>
+            <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3">
+                <i class="fas fa-plus-circle text-sipblue text-lg md:text-xl"></i> Tambah Fasilitas
+            </h2>
             
             <form id="formTambahFasilitas" method="POST" action="{{ route('admin.fasilitas.store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="space-y-4 md:space-y-5">
                     <div>
                         <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Nama Fasilitas</label>
-                        <input type="text" name="nama" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sipblue focus:ring-1 focus:ring-sipblue transition-all text-sm">
+                        <input type="text" name="nama" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sipblue focus:ring-1 focus:ring-sipblue transition-all text-sm" placeholder="Contoh: Lab Komputer FIK 1">
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -37,27 +39,39 @@
                         </div>
                         <div>
                             <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Kapasitas</label>
-                            <input type="number" name="kapasitas" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sipblue transition-all text-sm">
+                            <div class="relative">
+                                <input type="number" name="kapasitas" required class="w-full bg-sipbg border border-sipborder rounded-xl pl-4 pr-16 py-3 text-white focus:outline-none focus:border-sipblue transition-all text-sm" placeholder="40">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-siptext text-xs">Orang</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Pilih Ikon</label>
-                        <select name="ikon" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm">
-                            <option value="fas fa-building">🏢 Gedung Umum</option>
-                            <option value="fas fa-laptop-code">💻 Lab Komputer</option>
-                            <option value="fas fa-chalkboard-teacher">👨‍🏫 Ruang Kelas</option>
-                            <option value="fas fa-users">👥 Ruang Rapat</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Harga Sewa / Hari</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-siptext text-xs font-bold">Rp</span>
+                                <input type="number" name="harga_per_hari" required class="w-full bg-sipbg border border-sipborder rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sipblue transition-all text-sm" placeholder="350000">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Pilih Ikon</label>
+                            <select name="ikon" required class="w-full bg-sipbg border border-sipborder rounded-xl px-4 py-3 text-white text-sm appearance-none focus:outline-none focus:border-sipblue transition-all">
+                                <option value="fas fa-building">🏢 Gedung Umum</option>
+                                <option value="fas fa-laptop-code">💻 Lab Komputer</option>
+                                <option value="fas fa-chalkboard-teacher">👨‍🏫 Ruang Kelas</option>
+                                <option value="fas fa-users">👥 Ruang Rapat</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-[10px] md:text-xs font-semibold text-siptext uppercase tracking-wider mb-2">Foto Ruangan</label>
-                        <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-sipblue/10 file:text-sipblue hover:file:bg-sipblue/20 cursor-pointer">
+                        <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-sipblue/10 file:text-sipblue hover:file:bg-sipblue/20 transition-all cursor-pointer">
                     </div>
                     
-                    <button type="submit" class="w-full bg-sipblue hover:bg-sipbluehover text-white font-bold py-3 md:py-3.5 rounded-xl transition-all shadow-lg shadow-sipblue/30 active:scale-95 text-sm md:text-base">
-                        Simpan Fasilitas
+                    <button type="submit" class="w-full bg-sipblue hover:bg-sipbluehover text-white font-bold py-3 md:py-3.5 rounded-xl transition-all shadow-lg shadow-sipblue/30 active:scale-[0.98] text-sm md:text-base mt-2">
+                        <i class="fas fa-save mr-1.5"></i> Simpan Fasilitas
                     </button>
                 </div>
             </form>
@@ -144,7 +158,7 @@
                     </div>
                     
                     <div class="flex items-center gap-1 md:gap-2 shrink-0">
-                        <button type="button" onclick="bukaModalEdit('{{ $row->id_fasilitas }}', '{{ addslashes($row->nama_fasilitas) }}', '{{ $row->kategori }}', '{{ $row->kapasitas }}', '{{ $row->ikon }}')" class="text-sipblue p-2 hover:scale-110 transition-transform"><i class="fas fa-edit"></i></button>
+                        <button type="button" onclick="bukaModalEdit('{{ $row->id_fasilitas }}', '{{ addslashes($row->nama_fasilitas) }}', '{{ $row->kategori }}', '{{ $row->kapasitas }}', '{{ $row->harga_per_hari }}', '{{ $row->ikon }}')" class="text-sipblue p-2 hover:scale-110 transition-transform"><i class="fas fa-edit"></i></button>
                         
                         <form method="POST" action="{{ route('admin.fasilitas.delete') }}" class="inline">
                             @csrf
@@ -163,87 +177,116 @@
         </div>
 
         <div class="bg-sipdark border border-sipborder rounded-3xl p-5 md:p-8 shadow-xl">
-            <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3">
-                <i class="fas fa-calendar-minus text-siptext text-lg md:text-xl"></i> Fasilitas Yang Diblokir
-            </h2>
-            
-            <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-5 md:mb-6">
-                <div class="flex-1 relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-siptext"></i>
-                    <input type="text" id="searchBlokir" placeholder="Cari nama fasilitas..." class="w-full bg-sipbg border border-sipborder rounded-xl pl-10 pr-4 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-sipblue transition-all">
-                </div>
-                <select id="filterKategoriBlokir" class="bg-sipbg border border-sipborder rounded-xl px-4 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-sipblue transition-all">
-                    <option value="semua">Semua Kategori</option>
-                    <option value="gsg">GSG</option>
-                    <option value="lab">Lab</option>
-                    <option value="kelas">Kelas</option>
-                    <option value="rapat">Ruang Rapat</option>
-                </select>
+        <h2 class="text-base md:text-lg font-bold mb-5 md:mb-6 flex items-center gap-3">
+            <i class="fas fa-calendar-minus text-siptext text-lg md:text-xl"></i> Fasilitas Yang Diblokir
+        </h2>
+        
+        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-5 md:mb-6">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-siptext"></i>
+                <input type="text" id="searchBlokir" placeholder="Cari nama fasilitas..." class="w-full bg-sipbg border border-sipborder rounded-xl pl-10 pr-4 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-sipblue transition-all">
             </div>
-
-            <div class="overflow-y-auto overflow-x-auto max-h-[400px] pr-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
-                <table class="w-full text-left border-collapse relative min-w-[500px]">
-                    <thead class="sticky top-0 bg-sipdark z-20">
-                        <tr class="text-siptext text-[10px] md:text-xs uppercase font-bold tracking-wider whitespace-nowrap">
-                            <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm">Fasilitas</th>
-                            <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm">Keterangan Blokir</th>
-                            <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBlokirBody">
-                        @php
-                            $grouped_blokir = $q_blokir->groupBy('id_fasilitas');
-                        @endphp
-                        
-                        @forelse($grouped_blokir as $id_fasilitas => $blocks)
-                        @php
-                            $first = $blocks->first();
-                            $total_hari = $blocks->count();
-                            
-                            $reasons = $blocks->pluck('keperluan')->unique();
-                            $display_reason = $reasons->count() > 1 ? $reasons->count() . ' Keperluan Berbeda' : $first->keperluan;
-                            
-                            $blocked_data = $blocks->map(function($item) {
-                                return [
-                                    'tanggal' => $item->tanggal_pinjam,
-                                    'alasan'  => $item->keperluan
-                                ];
-                            })->sortBy('tanggal')->values()->toArray();
-                        @endphp
-                        <tr class="blokir-row border-b border-sipborder/50 hover:bg-sipbg/50 transition-colors whitespace-nowrap" 
-                            data-nama="{{ strtolower($first->fasilitas->nama_fasilitas) }}" 
-                            data-kategori="{{ strtolower($first->fasilitas->kategori) }}">
-                            
-                            <td class="py-3 md:py-4 px-4 text-white flex items-center gap-3">
-                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-sipred/10 text-sipred flex items-center justify-center shrink-0">
-                                    <i class="fas fa-lock text-sm md:text-base"></i>
-                                </div>
-                                <div class="truncate max-w-[150px] md:max-w-[200px]">
-                                    <div class="font-bold text-xs md:text-sm truncate" title="{{ $first->fasilitas->nama_fasilitas }}">{{ $first->fasilitas->nama_fasilitas }}</div>
-                                    <div class="text-[9px] md:text-[10px] font-bold text-sipred mt-0.5">{{ $total_hari }} Hari Diblokir</div>
-                                </div>
-                            </td>
-                            <td class="py-3 md:py-4 px-4 text-xs md:text-sm text-siptext italic truncate max-w-[150px]" title="{{ $display_reason }}">"{{ $display_reason }}"</td>
-                            <td class="py-3 md:py-4 px-4 text-right">
-                                <button type="button" 
-                                        data-dates="{{ json_encode($blocked_data) }}"
-                                        onclick="bukaModalEditRentang('{{ $id_fasilitas }}', '{{ addslashes($first->fasilitas->nama_fasilitas) }}', this)" 
-                                        class="inline-flex items-center gap-1.5 md:gap-2 text-sipblue bg-sipblue/10 hover:bg-sipblue hover:text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold transition-all">
-                                    <i class="fas fa-edit"></i> Atur Jadwal
-                                </button>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr id="emptyBlokirRow">
-                            <td colspan="3" class="py-8 text-center text-siptext text-xs md:text-sm">
-                                <i class="fas fa-check-circle text-xl md:text-2xl mb-2 opacity-50 block text-[#00AE1C]"></i> Tidak ada fasilitas yang sedang diblokir.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <select id="filterKategoriBlokir" class="bg-sipbg border border-sipborder rounded-xl px-4 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-sipblue transition-all">
+                <option value="semua">Semua Kategori</option>
+                <option value="gsg">GSG</option>
+                <option value="lab">Lab</option>
+                <option value="kelas">Kelas</option>
+                <option value="rapat">Ruang Rapat</option>
+            </select>
         </div>
+
+        <div class="overflow-y-auto overflow-x-auto max-h-[400px] pr-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-sipborder [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
+            <table class="w-full text-left border-collapse relative min-w-[500px]">
+                <thead class="sticky top-0 bg-sipdark z-20">
+                    <tr class="text-siptext text-[10px] md:text-xs uppercase font-bold tracking-wider whitespace-nowrap">
+                        <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm">Fasilitas</th>
+                        <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm">Keterangan & Tanggal</th>
+                        <th class="py-3 md:py-4 px-4 border-b border-sipborder shadow-sm text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBlokirBody">
+                    @php
+                        $grouped_blokir = $q_blokir->groupBy('id_fasilitas');
+                    @endphp
+                    
+                    @forelse($grouped_blokir as $id_fasilitas => $blocks)
+                    @php
+                        $first = $blocks->first();
+                        $total_jadwal = $blocks->count();
+                        
+                        // Logika tampilan alasan blokir
+                        $reasons = $blocks->pluck('keperluan')->unique();
+                        $display_reason = $reasons->count() > 1 ? $reasons->count() . ' Keperluan Berbeda' : $first->keperluan;
+                        
+                        // 1. Data mentah untuk modal JavaScript (Diperbaiki kolom tanggalnya)
+                        $blocked_data = $blocks->map(function($item) {
+                            return [
+                                'tanggal_mulai'    => $item->tanggal_mulai,
+                                'tanggal_berakhir' => $item->tanggal_berakhir,
+                                'alasan'           => $item->keperluan
+                            ];
+                        })->sortBy('tanggal_mulai')->values()->toArray();
+
+                        // 2. Data visual badge tanggal untuk ditampilkan di tabel
+                        $date_badges = $blocks->map(function($item) {
+                            $tgl_mulai = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y');
+                            $tgl_akhir = \Carbon\Carbon::parse($item->tanggal_berakhir)->translatedFormat('d M Y');
+                            return $tgl_mulai === $tgl_akhir ? $tgl_mulai : "$tgl_mulai s/d $tgl_akhir";
+                        })->unique()->take(2); // Ambil maksimal 2 rentang agar tabel tidak kepanjangan
+                    @endphp
+                    <tr class="blokir-row border-b border-sipborder/50 hover:bg-sipbg/50 transition-colors whitespace-nowrap" 
+                        data-nama="{{ strtolower($first->fasilitas->nama_fasilitas) }}" 
+                        data-kategori="{{ strtolower($first->fasilitas->kategori) }}">
+                        
+                        <td class="py-3 md:py-4 px-4 text-white flex items-center gap-3">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-sipred/10 text-sipred flex items-center justify-center shrink-0">
+                                <i class="fas fa-lock text-sm md:text-base"></i>
+                            </div>
+                            <div class="truncate max-w-[150px] md:max-w-[200px]">
+                                <div class="font-bold text-xs md:text-sm truncate" title="{{ $first->fasilitas->nama_fasilitas }}">{{ $first->fasilitas->nama_fasilitas }}</div>
+                                <div class="text-[9px] md:text-[10px] font-bold text-sipred mt-0.5">{{ $total_jadwal }} Sesi Terblokir</div>
+                            </div>
+                        </td>
+                        
+                        <td class="py-3 md:py-4 px-4">
+                            <div class="text-xs md:text-sm text-siptext italic truncate max-w-[200px] mb-1.5" title="{{ $display_reason }}">
+                                "{{ $display_reason }}"
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                @foreach($date_badges as $badge)
+                                    <span class="px-2 py-0.5 bg-gray-800 border border-gray-700 text-gray-300 rounded text-[9px] font-medium tracking-wide">
+                                        <i class="far fa-calendar-alt text-sipblue mr-1"></i> {{ $badge }}
+                                    </span>
+                                @endforeach
+                                
+                                @if($blocks->count() > 2)
+                                    <span class="px-2 py-0.5 bg-gray-800 border border-gray-700 text-gray-400 rounded text-[9px] font-medium">
+                                        +{{ $blocks->count() - 2 }} lainnya
+                                    </span>
+                                @endif
+                            </div>
+                        </td>
+                        
+                        <td class="py-3 md:py-4 px-4 text-right">
+                            <button type="button" 
+                                    data-dates="{{ json_encode($blocked_data) }}"
+                                    onclick="bukaModalEditRentang('{{ $id_fasilitas }}', '{{ addslashes($first->fasilitas->nama_fasilitas) }}', this)" 
+                                    class="inline-flex items-center gap-1.5 md:gap-2 text-sipblue bg-sipblue/10 hover:bg-sipblue hover:text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold transition-all">
+                                <i class="fas fa-edit"></i> Atur Jadwal
+                            </button>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr id="emptyBlokirRow">
+                        <td colspan="3" class="py-8 text-center text-siptext text-xs md:text-sm">
+                            <i class="fas fa-check-circle text-xl md:text-2xl mb-2 opacity-50 block text-[#00AE1C]"></i> Tidak ada fasilitas yang sedang diblokir.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 
         <form id="formUnblockRange" method="POST" action="{{ route('admin.unblock.range') }}" class="hidden">
             @csrf

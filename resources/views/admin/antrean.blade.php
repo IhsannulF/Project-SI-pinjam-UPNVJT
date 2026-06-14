@@ -213,36 +213,50 @@
                             </td>
                             <td class="p-4 text-center">
                                 @if($item->status == 'disetujui')
-                                    <span class="inline-flex items-center gap-1 bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/20 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase"><i class="fas fa-check"></i> Disetujui</span>
-                                @elseif($item->status == 'ditolak' || $item->status == 'diblokir')
-                                    <span class="inline-flex items-center gap-1 bg-sipred/10 text-sipred border border-sipred/20 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase"><i class="fas fa-times"></i> Ditolak</span>
+                                    <span class="inline-flex items-center gap-1 bg-[#00AE1C]/10 text-[#00AE1C] border border-[#00AE1C]/20 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase">
+                                        <i class="fas fa-check"></i> Disetujui
+                                    </span>
+                                @elseif($item->status == 'ditolak')
+                                    <span class="inline-flex items-center gap-1 bg-sipred/10 text-sipred border border-sipred/20 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase">
+                                        <i class="fas fa-times"></i> Ditolak
+                                    </span>
+                                @elseif($item->status == 'diblokir')
+                                    <span class="inline-flex items-center gap-1 bg-gray-700/20 text-gray-400 border border-gray-600/30 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase shadow-sm">
+                                        <i class="fas fa-lock"></i> Ditutup
+                                    </span>
                                 @elseif($item->status == 'dibatalkan')
-                                    <span class="inline-flex items-center gap-1 bg-gray-600/10 text-gray-400 border border-gray-600/30 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase"><i class="fas fa-ban"></i> Batal</span>
+                                    <span class="inline-flex items-center gap-1 bg-gray-600/10 text-gray-400 border border-gray-600/30 px-2 py-1 rounded text-[9px] md:text-[10px] font-bold uppercase">
+                                        <i class="fas fa-ban"></i> Batal
+                                    </span>
                                 @endif
                             </td>
                             <td class="p-4 pr-6 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button type="button" 
-                                        data-id="{{ $item->id_peminjaman }}"
-                                        data-mulai="{{ $item->tanggal_mulai }}"
-                                        data-akhir="{{ $item->tanggal_berakhir }}"
-                                        data-nama="{{ $item->user->nama_lengkap ?? 'User' }}"
-                                        data-fasilitas="{{ $item->fasilitas->nama_fasilitas ?? 'Fasilitas' }}"
-                                        onclick="bukaModalEdit(this)"
-                                        class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-sipblue/10 text-sipblue hover:bg-sipblue hover:text-white flex items-center justify-center transition-colors border border-sipblue/20"
-                                        title="Edit Tanggal">
-                                        <i class="fas fa-calendar-day text-xs md:text-sm"></i>
-                                    </button>
-
-                                    <form action="{{ route('admin.antrean.batal', $item->id_peminjaman) }}" method="POST" class="form-batal-riwayat m-0">
-                                        @csrf
-                                        @method('PUT')
+                                    @if($item->status != 'diblokir')
                                         <button type="button" 
-                                            class="btn-batal-riwayat w-7 h-7 md:w-8 md:h-8 rounded-lg bg-sipred/10 text-sipred hover:bg-sipred hover:text-white flex items-center justify-center transition-colors border border-sipred/20"
-                                            title="Batalkan Jadwal">
-                                            <i class="fas fa-times text-xs md:text-sm"></i> 
+                                            data-id="{{ $item->id_peminjaman }}"
+                                            data-mulai="{{ $item->tanggal_mulai }}"
+                                            data-akhir="{{ $item->tanggal_berakhir }}"
+                                            data-nama="{{ $item->user->nama_lengkap ?? 'User' }}"
+                                            data-fasilitas="{{ $item->fasilitas->nama_fasilitas ?? 'Fasilitas' }}"
+                                            onclick="bukaModalEdit(this)"
+                                            class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-sipblue/10 text-sipblue hover:bg-sipblue hover:text-white flex items-center justify-center transition-colors border border-sipblue/20"
+                                            title="Edit Tanggal">
+                                            <i class="fas fa-calendar-day text-xs md:text-sm"></i>
                                         </button>
-                                    </form>
+
+                                        <form action="{{ route('admin.antrean.batal', $item->id_peminjaman) }}" method="POST" class="form-batal-riwayat m-0">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="button" 
+                                                class="btn-batal-riwayat w-7 h-7 md:w-8 md:h-8 rounded-lg bg-sipred/10 text-sipred hover:bg-sipred hover:text-white flex items-center justify-center transition-colors border border-sipred/20"
+                                                title="Batalkan Jadwal">
+                                                <i class="fas fa-times text-xs md:text-sm"></i> 
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="text-[10px] text-gray-500 italic">Sistem</span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

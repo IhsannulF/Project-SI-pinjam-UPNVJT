@@ -9,14 +9,13 @@ use App\Models\Fasilitas;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
-use Carbon\CarbonPeriod; // Wajib ditambahkan untuk mengelola rentang tanggal
+use Carbon\CarbonPeriod;
 
 class AdminController extends Controller
 {
     // --- 1. HALAMAN DASHBOARD ---
     public function index()
     {
-        // Menggabungkan semua status yang perlu diproses ke dalam hitungan "Pending"
         $count_pending = Peminjaman::whereIn('status', [
             'pending', 
             'menunggu', 
@@ -41,8 +40,18 @@ class AdminController extends Controller
     public function fasilitas()
     {
         $q_fasilitas = Fasilitas::orderBy('kategori', 'asc')->get();
-        // Mengambil semua data blokir tanpa dibatasi (jangan pakai limit/take di sini)
-        $q_blokir = Peminjaman::with('fasilitas')->where('status', 'diblokir')->get();
+        
+        // REVISI: Hanya mengambil data yang statusnya murni "diblokir" oleh Admin
+        $q_blokir = Peminjaman::with('fasilitas')
+            ->where('status', 'diblokir') // <--- Diubah menjadi spesifik hanya status ini
+            ->where(function ($query) {
+                // Tetap mempertahankan fitur otomatis hilang jika sudah kedaluwarsa
+                $query->whereDate('tanggal_berakhir', '>=', now()->toDateString())
+                      ->orWhereDate('tanggal_mulai', '>=', now()->toDateString());
+            })
+            ->orderBy('tanggal_mulai', 'asc')
+            ->get();
+            
         return view('admin.fasilitas', compact('q_fasilitas', 'q_blokir'));
     }
 
@@ -57,11 +66,12 @@ class AdminController extends Controller
         }
         Fasilitas::create([
             'nama_fasilitas' => $request->nama,
-            'kategori' => $request->kategori,
-            'kapasitas' => $request->kapasitas,
-            'ikon' => $request->ikon,
+            'kategori'       => $request->kategori,
+            'kapasitas'      => $request->kapasitas,
+            'harga_per_hari' => $request->harga_per_hari,
+            'ikon'           => $request->ikon,
             'foto_fasilitas' => $foto_nama,
-            'status' => 'tersedia'
+            'status'         => 'tersedia'
         ]);
         return back()->with('success', 'Fasilitas berhasil ditambah!');
     }
@@ -80,9 +90,11 @@ class AdminController extends Controller
         }
         $fasilitas->update([
             'nama_fasilitas' => $request->nama,
-            'kategori' => $request->kategori,
-            'kapasitas' => $request->kapasitas,
-            'foto_fasilitas' => $foto_final
+            'kategori'       => $request->kategori,
+            'kapasitas'      => $request->kapasitas,
+            'harga_per_hari' => $request->harga_per_hari,
+            'foto_fasilitas' => $foto_final,
+            'ikon'           => $request->ikon,
         ]);
         return back()->with('success', 'Fasilitas diperbarui!');
     }
@@ -97,18 +109,16 @@ class AdminController extends Controller
         return back()->with('success', 'Fasilitas dihapus!');
     }
 
-    // --- 4. LOGIKA BLOKIR JADWAL (SUDAH DIPERBAIKI) ---
+    // --- 4. LOGIKA BLOKIR JADWAL ---
     public function blockSchedule(Request $request)
     {
-        // 1. Validasi input untuk keamanan
         $request->validate([
             'id_fasilitas_blokir' => 'required',
             'tanggal_mulai'       => 'required|date',
-            'tanggal_berakhir'    => 'required|date|after_or_equal:tanggal_mulai', // Disesuaikan dengan form HTML
+            'tanggal_berakhir'    => 'required|date|after_or_equal:tanggal_mulai',
             'keperluan'           => 'required|string'
         ]);
 
-        // 2. Buat rentang tanggal menggunakan fitur bawaan Laravel (Carbon)
         $period = CarbonPeriod::create($request->tanggal_mulai, $request->tanggal_berakhir);
         $berhasil = 0;
         $dilewati = 0;
@@ -116,29 +126,26 @@ class AdminController extends Controller
         foreach ($period as $date) {
             $tgl = $date->format('Y-m-d');
 
-            // 3. Cek Pintar: Apakah tanggal ini sudah terisi?
             $sudahAda = Peminjaman::where('id_fasilitas', $request->id_fasilitas_blokir)
-                                  ->where('tanggal_pinjam', $tgl)
+                                  ->where('tanggal_mulai', $tgl)
                                   ->whereIn('status', ['diblokir', 'disetujui', 'pending'])
                                   ->exists();
 
             if (!$sudahAda) {
-                // Jika masih kosong, blokir!
                 Peminjaman::create([
-                    'id_fasilitas'   => $request->id_fasilitas_blokir,
-                    'id_user' => Auth::id() ?? 1,
-                    'tanggal_pinjam' => $tgl,
-                    'keperluan'      => $request->keperluan,
-                    'status'         => 'diblokir'
+                    'id_fasilitas'     => $request->id_fasilitas_blokir,
+                    'id_user'          => Auth::id() ?? 1,
+                    'tanggal_mulai'    => $tgl,
+                    'tanggal_berakhir' => $tgl, // PENTING: Harus diisi agar data valid untuk pop-up edit!
+                    'keperluan'        => $request->keperluan,
+                    'status'           => 'diblokir'
                 ]);
                 $berhasil++;
             } else {
-                // Jika sudah ada jadwal di tanggal ini, catat sebagai 'dilewati'
                 $dilewati++;
             }
         }
 
-        // 4. Laporan yang informatif untuk Admin
         if ($berhasil > 0) {
             $pesan = "$berhasil hari jadwal berhasil diblokir.";
             if ($dilewati > 0) {
@@ -150,7 +157,7 @@ class AdminController extends Controller
         }
     }
 
-    // --- 5. LOGIKA BUKA BLOKIR RENTANG TANGGAL (POP-UP SWEETALERT) ---
+    // --- 5. LOGIKA BUKA BLOKIR RENTANG TANGGAL ---
     public function unblockRange(Request $request)
     {
         $request->validate([
@@ -159,24 +166,25 @@ class AdminController extends Controller
             'tanggal_berakhir_unblock' => 'required|date|after_or_equal:tanggal_mulai_unblock',
         ]);
 
-        // Hapus massal data blokir yang berada di dalam rentang tanggal
+        // PENTING: Menggunakan query where() yang mencari rentang overlap
         $deleted = Peminjaman::where('id_fasilitas', $request->id_fasilitas_unblock)
             ->where('status', 'diblokir')
-            ->whereBetween('tanggal_pinjam', [$request->tanggal_mulai_unblock, $request->tanggal_berakhir_unblock])
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('tanggal_mulai', [$request->tanggal_mulai_unblock, $request->tanggal_berakhir_unblock])
+                      ->orWhereBetween('tanggal_berakhir', [$request->tanggal_mulai_unblock, $request->tanggal_berakhir_unblock]);
+            })
             ->delete();
 
         if($deleted) {
-            return back()->with('success', "$deleted hari jadwal blokir berhasil dibuka pada rentang tersebut.");
+            return back()->with('success', "$deleted sesi jadwal blokir berhasil dihapus/dibuka pada rentang tersebut.");
         } else {
-            return back()->with('error', 'Tidak ditemukan jadwal diblokir pada rentang tersebut.');
+            return back()->with('error', 'Gagal membuka blokir. Pastikan rentang tanggal yang dipilih benar.');
         }
     }
     
-    // 1. Menampilkan Halaman Antrean Pinjaman
+    // --- 6. HALAMAN ANTREAN PINJAMAN ---
     public function antrean()
     {
-        // 1. Antrean Baru (Belum selesai diproses)
-        // DITAMBAHKAN: 'Menunggu Pembayaran' agar data tidak hilang dari pengawasan Admin
         $antrean_baru = Peminjaman::with(['user', 'fasilitas'])
             ->whereIn('status', [
                 'menunggu', 
@@ -185,84 +193,73 @@ class AdminController extends Controller
                 'Menunggu Pembayaran', 
                 'Menunggu Konfirmasi Jadwal'
             ])
-            ->orderBy('id_peminjaman', 'asc') // Antrean yang masuk duluan berada di atas
+            ->orderBy('id_peminjaman', 'asc')
             ->get();
 
-        // 2. Riwayat (Sudah selesai diproses / final)
-        // DITAMBAHKAN: 'dibatalkan' untuk merekam jadwal yang dibatalkan
         $riwayat_proses = \App\Models\Peminjaman::with(['user', 'fasilitas'])
             ->whereIn('status', ['disetujui', 'ditolak', 'diblokir', 'dibatalkan'])
-            ->orderBy('id_peminjaman', 'desc') // Riwayat yang baru saja diproses berada di atas
+            ->orderBy('id_peminjaman', 'desc')
             ->get();
 
         return view('admin.antrean', compact('antrean_baru', 'riwayat_proses'));
     }
 
-    // 2. Memproses Perubahan Status (Terima / Tolak)
+    // --- 7. MEMPROSES PERUBAHAN STATUS ---
     public function updateStatus(Request $request, $id)
     {
-    // 1. Validasi Cukup SEKALI Saja
-    $request->validate([
-        'status' => 'required|in:disetujui,ditolak,menunggu,diblokir,dibatalkan,Menunggu Verifikasi MoU,Menunggu Pembayaran,Menunggu Konfirmasi Jadwal'
-    ]);
+        $request->validate([
+            'status' => 'required|in:disetujui,ditolak,menunggu,diblokir,dibatalkan,Menunggu Verifikasi MoU,Menunggu Pembayaran,Menunggu Konfirmasi Jadwal'
+        ]);
 
-    // 2. Ambil Data dan Update Cukup SEKALI
-    $peminjaman = \App\Models\Peminjaman::findOrFail($id);
-    $peminjaman->update([
-        'status' => $request->status
-    ]);
+        $peminjaman = \App\Models\Peminjaman::findOrFail($id);
+        $peminjaman->update([
+            'status' => $request->status
+        ]);
 
-    // 3. Logika Pesan Notifikasi Dinamis
-    if ($request->status == 'disetujui') {
-        $pesan = 'Pengajuan berhasil disetujui!';
-    } elseif ($request->status == 'ditolak') {
-        $pesan = 'Pengajuan berhasil ditolak!';
-    } elseif ($request->status == 'Menunggu Pembayaran') {
-        $pesan = 'Tagihan berhasil diterbitkan! Menunggu pembayaran dari instansi.';
-    } elseif ($request->status == 'Menunggu Konfirmasi Jadwal') {
-        $pesan = 'Bukti bayar telah diterima. Silakan atur jadwal terkait.';
-    } else {
-        $pesan = 'Status pengajuan berhasil diperbarui menjadi: ' . $request->status;
+        if ($request->status == 'disetujui') {
+            $pesan = 'Pengajuan berhasil disetujui!';
+        } elseif ($request->status == 'ditolak') {
+            $pesan = 'Pengajuan berhasil ditolak!';
+        } elseif ($request->status == 'Menunggu Pembayaran') {
+            $pesan = 'Tagihan berhasil diterbitkan! Menunggu pembayaran dari instansi.';
+        } elseif ($request->status == 'Menunggu Konfirmasi Jadwal') {
+            $pesan = 'Bukti bayar telah diterima. Silakan atur jadwal terkait.';
+        } else {
+            $pesan = 'Status pengajuan berhasil diperbarui menjadi: ' . $request->status;
+        }
+
+        return back()->with('success', $pesan);
     }
 
-    return back()->with('success', $pesan);
-    }
-
-    // 3. Menampilkan Halaman Data Pengguna
+    // --- 8. KELOLA PENGGUNA ---
     public function pengguna()
     {
-        // Mengambil semua user, diurutkan berdasarkan role lalu nama
         $users = \App\Models\User::orderBy('role')->orderBy('nama_lengkap', 'asc')->get();
         return view('admin.pengguna', compact('users'));
     }
 
-    // Fungsi untuk menyimpan data pengguna baru dari Modal
     public function storePengguna(Request $request)
     {
-        // Validasi input dari form
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
-            'identitas'    => 'required|string|max:50|unique:users,identitas', // Tambahan validasi identitas
+            'identitas'    => 'required|string|max:50|unique:users,identitas',
             'email'        => 'required|string|email|max:255|unique:users,email', 
             'password'     => 'required|string|min:8',
             'role'         => 'required|in:admin,dosen,mahasiswa,umum',
         ]);
 
-        // Simpan ke database
         User::create([
             'nama_lengkap' => $request->nama_lengkap,
             'identitas'    => $request->identitas, 
             'email'        => $request->email,
-            'password'     => Hash::make($request->password), // Enkripsi password
+            'password'     => Hash::make($request->password),
             'role'         => $request->role,
         ]);
 
         return back()->with('success', 'Pengguna baru berhasil didaftarkan!');
     }
 
-    // --- FITUR KELOLA RIWAYAT ---
-
-    // 1. Fungsi Update Tanggal Riwayat
+    // --- 9. KELOLA RIWAYAT ---
     public function updateJadwal(Request $request, $id)
     {
         $request->validate([
@@ -279,12 +276,9 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Tanggal peminjaman berhasil diperbarui!');
     }
 
-    // 2. Fungsi Batalkan Riwayat (Bukan Hapus Permanen)
     public function batalkanJadwal($id)
     {
         $peminjaman = \App\Models\Peminjaman::findOrFail($id);
-        
-        // Ubah status menjadi dibatalkan
         $peminjaman->update([
             'status' => 'dibatalkan'
         ]);

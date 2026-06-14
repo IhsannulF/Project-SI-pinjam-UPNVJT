@@ -25,7 +25,7 @@ window.konfirmasiHapus = function(button) {
 };
 
 // 2. Buka Modal Edit Fasilitas
-window.bukaModalEdit = function(id, nama, kategori, kapasitas, ikon) {
+window.bukaModalEdit = function(id, nama, kategori, kapasitas, harga, ikon) {
     Swal.fire({
         title: 'Edit Fasilitas',
         background: '#16181e',
@@ -53,13 +53,30 @@ window.bukaModalEdit = function(id, nama, kategori, kapasitas, ikon) {
                     </div>
                     <div>
                         <label class="block text-[10px] md:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Kapasitas</label>
-                        <input type="number" name="kapasitas" value="${kapasitas}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-2.5 md:py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                        <div class="relative">
+                            <input type="number" name="kapasitas" value="${kapasitas}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl pl-4 pr-12 py-2.5 md:py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] md:text-xs font-bold">Orang</span>
+                        </div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-[10px] md:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ikon (FontAwesome)</label>
-                    <input type="text" name="ikon" value="${ikon}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-2.5 md:py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] md:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Harga Sewa / Hari</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] md:text-xs font-bold">Rp</span>
+                            <input type="number" name="harga_per_hari" value="${harga}" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl pl-10 pr-4 py-2.5 md:py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] md:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Pilih Ikon</label>
+                        <select name="ikon" required class="w-full bg-[#2d3240] border border-gray-600 rounded-xl px-4 py-2.5 md:py-3 text-white focus:outline-none focus:border-[#009EF7] transition-all text-sm">
+                            <option value="fas fa-building" ${ikon == 'fas fa-building' ? 'selected' : ''}>🏢 Gedung Umum</option>
+                            <option value="fas fa-laptop-code" ${ikon == 'fas fa-laptop-code' ? 'selected' : ''}>💻 Lab Komputer</option>
+                            <option value="fas fa-chalkboard-teacher" ${ikon == 'fas fa-chalkboard-teacher' ? 'selected' : ''}>👨‍🏫 Ruang Kelas</option>
+                            <option value="fas fa-users" ${ikon == 'fas fa-users' ? 'selected' : ''}>👥 Ruang Rapat</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div>
@@ -298,31 +315,38 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
     let datesHtml = '';
     if (blockedData.length > 0) {
         const groupedByReason = {};
+        
         blockedData.forEach(item => {
             if (!groupedByReason[item.alasan]) groupedByReason[item.alasan] = [];
-            groupedByReason[item.alasan].push(item.tanggal);
+            groupedByReason[item.alasan].push(item.tanggal_mulai); 
         });
 
         const formatDate = (dStr) => new Date(dStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 
         let listHtml = '';
-        for (const [alasan, dates] of Object.entries(groupedByReason)) {
-            dates.sort();
+        for (const [alasan, datesStr] of Object.entries(groupedByReason)) {
+            datesStr.sort(); 
+            let dates = datesStr.map(d => new Date(d));
+            
             let ranges = [];
             let start = dates[0], prev = dates[0];
 
             for (let i = 1; i < dates.length; i++) {
                 let current = dates[i];
-                let diffDays = Math.round(Math.abs(new Date(current) - new Date(prev)) / (1000 * 60 * 60 * 24));
+                let diffDays = Math.round((current - prev) / (1000 * 60 * 60 * 24));
 
                 if (diffDays === 1) {
                     prev = current;
                 } else {
-                    ranges.push(start === prev ? formatDate(start) : `${formatDate(start)} s/d ${formatDate(prev)}`);
+                    ranges.push(start.getTime() === prev.getTime() 
+                        ? formatDate(start) 
+                        : `${formatDate(start)} s/d ${formatDate(prev)}`);
                     start = prev = current;
                 }
             }
-            ranges.push(start === prev ? formatDate(start) : `${formatDate(start)} s/d ${formatDate(prev)}`);
+            ranges.push(start.getTime() === prev.getTime() 
+                ? formatDate(start) 
+                : `${formatDate(start)} s/d ${formatDate(prev)}`);
 
             const badges = ranges.map(rangeText => `<span class="bg-sipred/20 text-sipred border border-sipred/30 px-2.5 py-1 md:px-3 md:py-1.5 rounded-md text-[10px] md:text-xs font-bold inline-flex items-center shadow-sm whitespace-nowrap mb-1"><i class="far fa-calendar-alt mr-1.5"></i> ${rangeText}</span>`).join(' ');
 
@@ -363,7 +387,7 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
                 ${datesHtml}
                 
                 <div class="mt-4 border-t border-gray-700 pt-4">
-                    <p class="text-[10px] md:text-xs text-gray-400 mb-3">Tentukan rentang tanggal untuk <b>menghapus blokir</b>:</p>
+                    <p class="text-[10px] md:text-xs text-gray-400 mb-3">Tentukan rentang tanggal untuk <b>menghapus blokir spesifik</b>:</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                         <div>
                             <label class="block text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Dari Tanggal</label>
@@ -386,27 +410,23 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
         background: '#1e2128', 
         color: '#fff', 
         showCancelButton: true, 
+        showDenyButton: true, // MENAMBAHKAN TOMBOL KETIGA
         confirmButtonColor: '#009EF7',
-        confirmButtonText: '<i class="fas fa-unlock mr-1.5"></i> Buka Rentang Tanggal Ini',
+        denyButtonColor: '#DE2828', // Warna merah terang
+        confirmButtonText: '<i class="fas fa-calendar-check mr-1.5"></i> Buka Rentang',
+        denyButtonText: '<i class="fas fa-trash-alt mr-1.5"></i> Buka Semua',
         cancelButtonText: 'Batal',
         customClass: { 
             popup: 'rounded-3xl border border-gray-700 mx-4', 
-            confirmButton: 'text-xs md:text-sm font-bold rounded-xl px-4 py-2.5', 
-            cancelButton: 'text-xs md:text-sm font-bold rounded-xl px-4 py-2.5' 
+            confirmButton: 'text-[10px] md:text-xs font-bold rounded-xl px-3 md:px-4 py-2 md:py-2.5', 
+            denyButton: 'text-[10px] md:text-xs font-bold rounded-xl px-3 md:px-4 py-2 md:py-2.5', 
+            cancelButton: 'text-[10px] md:text-xs font-bold rounded-xl px-3 md:px-4 py-2 md:py-2.5' 
         },
         
         didOpen: () => {
             if (typeof flatpickr !== "undefined") {
-                flatpickr("#swal-mulai", {
-                    locale: "id",
-                    dateFormat: "Y-m-d",
-                    disableMobile: true
-                });
-                flatpickr("#swal-akhir", {
-                    locale: "id",
-                    dateFormat: "Y-m-d",
-                    disableMobile: true
-                });
+                flatpickr("#swal-mulai", { locale: "id", dateFormat: "Y-m-d", disableMobile: true });
+                flatpickr("#swal-akhir", { locale: "id", dateFormat: "Y-m-d", disableMobile: true });
             }
         },
         
@@ -419,11 +439,50 @@ window.bukaModalEditRentang = function(idFasilitas, namaFasilitas, btnElement) {
             return { mulai, akhir };
         }
     }).then((result) => {
+        // 1. Jika menekan tombol Biru (Buka rentang yang diketik)
         if (result.isConfirmed) {
             document.getElementById('unblock_id_fasilitas').value = idFasilitas;
             document.getElementById('unblock_tanggal_mulai').value = result.value.mulai;
             document.getElementById('unblock_tanggal_berakhir').value = result.value.akhir;
             document.getElementById('formUnblockRange').submit();
+        } 
+        // 2. Jika menekan tombol Merah (Buka / Hapus Semua Blokir)
+        else if (result.isDenied) {
+            Swal.fire({
+                title: 'Buka Semua Blokir?',
+                text: "Seluruh riwayat blokir untuk fasilitas ini akan dihapus secara permanen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DE2828',
+                confirmButtonText: 'Ya, Eksekusi!',
+                cancelButtonText: 'Batal',
+                background: '#16181e', color: '#fff',
+                customClass: { popup: 'rounded-3xl border border-gray-700 mx-4', confirmButton: 'rounded-xl font-bold', cancelButton: 'rounded-xl font-bold' }
+            }).then((confirmRes) => {
+                if (confirmRes.isConfirmed) {
+                    // Cari tanggal terkecil dan terbesar secara otomatis
+                    let allDates = [];
+                    blockedData.forEach(item => {
+                        allDates.push(new Date(item.tanggal_mulai));
+                        allDates.push(new Date(item.tanggal_berakhir));
+                    });
+                    
+                    let formatYMD = (d) => {
+                        let year = d.getFullYear();
+                        let month = String(d.getMonth() + 1).padStart(2, '0');
+                        let day = String(d.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+                    
+                    let minDate = formatYMD(new Date(Math.min.apply(null, allDates)));
+                    let maxDate = formatYMD(new Date(Math.max.apply(null, allDates)));
+
+                    document.getElementById('unblock_id_fasilitas').value = idFasilitas;
+                    document.getElementById('unblock_tanggal_mulai').value = minDate;
+                    document.getElementById('unblock_tanggal_berakhir').value = maxDate;
+                    document.getElementById('formUnblockRange').submit();
+                }
+            });
         }
     });
 };
